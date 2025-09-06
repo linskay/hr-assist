@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAuth } from '../../hooks/useAuth';
-import { LoginForm } from './LoginForm';
+import LoginPage from './LoginPage';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -24,7 +24,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }
 
   if (!isAuthenticated) {
-    return <LoginForm />;
+    return <LoginPage />;
   }
 
   if (requiredRoles && !hasAnyRole(requiredRoles)) {

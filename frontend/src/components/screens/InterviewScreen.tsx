@@ -2,6 +2,24 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { useInterview, useStartInterview, useHeartbeat, useInterviewRecording } from '../../hooks/useInterview';
+import { motion } from 'framer-motion';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Loader } from '@/components/ui/loader';
+import { Check, Mic, MicOff, MoveRight, Square, Video, VideoOff, Wifi, WifiOff, X, Maximize, Minimize } from 'lucide-react';
+import Typewriter from '@/components/ui/typewriter';
+
+// A placeholder for the audio visualizer
+const AudioVisualizer = () => (
+  <div className="flex items-center justify-center h-10 w-full">
+    <div className="flex items-end gap-1 h-full">
+      <motion.div className="w-2 bg-brand-highlight-aqua" initial={{ height: '10%' }} animate={{ height: ['20%', '80%', '30%', '90%', '40%', '70%', '20%'] }} transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }} />
+      <motion.div className="w-2 bg-brand-highlight-aqua" initial={{ height: '30%' }} animate={{ height: ['40%', '20%', '70%', '50%', '80%', '30%', '40%'] }} transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut', delay: 0.2 }} />
+      <motion.div className="w-2 bg-brand-highlight-aqua" initial={{ height: '50%' }} animate={{ height: ['70%', '40%', '90%', '60%', '20%', '50%', '70%'] }} transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut', delay: 0.4 }} />
+      <motion.div className="w-2 bg-brand-highlight-aqua" initial={{ height: '20%' }} animate={{ height: ['30%', '60%', '20%', '80%', '50%', '90%', '30%'] }} transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut', delay: 0.6 }} />
+    </div>
+  </div>
+);
 
 export default function InterviewScreen() {
   const { id } = useParams<{ id: string }>();
@@ -20,68 +38,44 @@ export default function InterviewScreen() {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const questions = [
-    "Расскажите о себе и своем опыте работы",
+    "Расскажите о себе и своем опыте работы.",
     "Почему вы хотите работать в нашей компании?",
     "Какие у вас сильные стороны?",
-    "Расскажите о сложной задаче, которую вам приходилось решать",
+    "Расскажите о сложной задаче, которую вам приходилось решать.",
     "Как вы работаете в команде?",
     "Какие у вас планы на развитие?",
   ];
 
   useEffect(() => {
-    if (interview?.status === 'STARTED' && !heartbeatActive) {
-      startHeartbeat();
-    }
-    
-    return () => {
-      stopHeartbeat();
-    };
+    if (interview?.status === 'STARTED' && !heartbeatActive) startHeartbeat();
+    return () => { stopHeartbeat(); };
   }, [interview?.status, heartbeatActive, startHeartbeat, stopHeartbeat]);
 
   useEffect(() => {
-    // Request camera and microphone permissions
     const requestPermissions = async () => {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: true,
-          audio: true
-        });
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
         setMediaStream(stream);
-        
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-        }
+        if (videoRef.current) videoRef.current.srcObject = stream;
       } catch (error) {
-        console.error('Failed to get media permissions:', error);
-        toast.error('Не удалось получить доступ к камере и микрофону');
+        toast.error('Не удалось получить доступ к камере и микрофону.');
       }
     };
-
     requestPermissions();
-
-    return () => {
-      if (mediaStream) {
-        mediaStream.getTracks().forEach(track => track.stop());
-      }
-    };
+    return () => { mediaStream?.getTracks().forEach(track => track.stop()); };
   }, []);
 
   const handleStartInterview = async () => {
     if (!consentGiven) {
-      toast.error('Необходимо дать согласие на обработку данных');
+      toast.error('Необходимо дать согласие на обработку данных.');
       return;
     }
-
     try {
       await startInterviewMutation.mutateAsync(interviewId);
-      toast.success('Интервью запущено!');
+      toast.success('Интервью началось!');
     } catch (error) {
-      console.error('Failed to start interview:', error);
+      console.error('Не удалось начать интервью:', error);
     }
-  };
-
-  const handleConsentChange = (checked: boolean) => {
-    setConsentGiven(checked);
   };
 
   const handleFullscreen = () => {
@@ -94,44 +88,34 @@ export default function InterviewScreen() {
     }
   };
 
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
+  const formatTime = (seconds: number) => new Date(seconds * 1000).toISOString().substr(14, 5);
 
   const handleNextQuestion = () => {
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     } else {
       toast.success('Интервью завершено!');
-      navigate('/dashboard');
+      navigate('/app/dashboard');
     }
   };
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-neon-blue mx-auto"></div>
-          <p className="mt-4 opacity-80">Загрузка интервью...</p>
-        </div>
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <Loader />
+        <p className="mt-4 text-white/80">Загрузка интервью...</p>
       </div>
     );
   }
 
   if (!interview) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold mb-4">❌ Интервью не найдено</h1>
-          <button 
-            onClick={() => navigate('/dashboard')}
-            className="btn-neon"
-          >
-            🏠 Вернуться к дашборду
-          </button>
-        </div>
+      <div className="flex flex-col items-center justify-center min-h-screen text-center p-4">
+        <X size={64} className="text-brand-highlight-pink" />
+        <h1 className="text-3xl font-bold mt-4">Интервью не найдено</h1>
+        <Button onClick={() => navigate('/app/dashboard')} className="mt-6">
+          Назад к панели
+        </Button>
       </div>
     );
   }
@@ -139,215 +123,123 @@ export default function InterviewScreen() {
   if (interview.status === 'CREATED') {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="card-neon w-full max-w-2xl p-8">
-          <div className="text-center">
-            <h1 className="text-5xl font-black text-gradient mb-6">
-              🎤 Добро пожаловать на интервью!
-            </h1>
-            
-            <div className="mb-8">
-              <h2 className="text-2xl font-bold mb-4">📋 Информация об интервью:</h2>
-              <div className="text-left space-y-3 bg-white bg-opacity-5 p-4 rounded-lg">
-                <p><strong>👤 Кандидат:</strong> {interview.candidateName}</p>
-                <p><strong>💼 Вакансия:</strong> {interview.vacancyTitle}</p>
-                <p><strong>📊 Статус:</strong> {interview.status}</p>
-              </div>
+        <Card className="w-full max-w-3xl" glow="aqua">
+          <CardContent className="p-8">
+            <div className="text-center">
+              <h1 className="text-5xl font-bold text-white mb-2">Добро пожаловать на интервью</h1>
+              <p className="text-white/60">Кандидат: {interview.candidateName} на вакансию {interview.vacancyTitle}</p>
             </div>
 
-            <div className="mb-8">
-              <h2 className="text-2xl font-bold mb-4">📝 Согласие на обработку данных:</h2>
-              <div className="text-left space-y-4">
-                <label className="flex items-start space-x-3">
-                  <input
-                    type="checkbox"
-                    checked={consentGiven}
-                    onChange={(e) => handleConsentChange(e.target.checked)}
-                    className="mt-1 h-5 w-5 text-neon-blue focus:ring-neon-blue border-neon-blue rounded"
-                  />
-                  <span className="text-sm opacity-80">
-                    Я даю согласие на запись и обработку моих персональных данных, 
-                    включая аудио и видео материалы, для целей проведения интервью 
-                    и оценки моих профессиональных качеств.
-                  </span>
-                </label>
-              </div>
+            <div className="my-8 space-y-6">
+              <Card>
+                <CardContent className="p-4">
+                  <h2 className="font-bold text-lg mb-2 text-brand-highlight-aqua">Технические требования</h2>
+                  <ul className="text-sm text-white/70 space-y-2">
+                    <li className="flex items-center gap-2"><Wifi size={16} /> Стабильное интернет-соединение</li>
+                    <li className="flex items-center gap-2"><Video size={16} /> Рабочая камера и микрофон</li>
+                    <li className="flex items-center gap-2"><X size={16} /> Не переключайте вкладки во время интервью</li>
+                  </ul>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-4">
+                  <h2 className="font-bold text-lg mb-2 text-brand-highlight-pink">Согласие на обработку данных</h2>
+                  <label className="flex items-start gap-3">
+                    <input type="checkbox" checked={consentGiven} onChange={(e) => setConsentGiven(e.target.checked)} className="mt-1 h-4 w-4 accent-brand-accent" />
+                    <span className="text-sm text-white/70">Я даю согласие на запись и обработку моих персональных данных, включая аудио и видео материалы, для целей проведения интервью и оценки.</span>
+                  </label>
+                </CardContent>
+              </Card>
             </div>
 
-            <div className="mb-8">
-              <h2 className="text-2xl font-bold mb-4">⚙️ Технические требования:</h2>
-              <ul className="text-left space-y-2 text-sm opacity-70 bg-white bg-opacity-5 p-4 rounded-lg">
-                <li>🌐 Стабильное интернет-соединение</li>
-                <li>📹 Рабочая камера и микрофон</li>
-                <li>🌍 Рекомендуется использовать Chrome или Firefox</li>
-                <li>🚫 Не переключайтесь между вкладками во время интервью</li>
-              </ul>
-            </div>
-
-            <button
-              onClick={handleStartInterview}
-              disabled={!consentGiven || startInterviewMutation.isLoading}
-              className={`btn-neon w-full text-lg py-4 ${!consentGiven ? 'opacity-50 cursor-not-allowed' : ''}`}
-            >
-              {startInterviewMutation.isLoading ? '🚀 Запуск...' : '🎬 Начать интервью'}
-            </button>
-          </div>
-        </div>
+            <Button onClick={handleStartInterview} disabled={!consentGiven || startInterviewMutation.isLoading} isLoading={startInterviewMutation.isLoading} size="lg" className="w-full">
+              Начать интервью
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen text-white">
+    <div className="flex flex-col h-screen bg-brand-bg text-white">
       {/* Header */}
-      <div className="glass border-b border-neon-blue border-opacity-20 p-4 flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold text-gradient">👤 {interview.candidateName}</h1>
-          <p className="opacity-70">💼 {interview.vacancyTitle}</p>
-        </div>
-        <div className="flex items-center space-x-6">
-          <div className="text-sm bg-white bg-opacity-5 px-3 py-2 rounded-lg">
-            <span className="opacity-70">❓ Вопрос:</span> <span className="text-neon-blue font-bold">{currentQuestion + 1} из {questions.length}</span>
-          </div>
-          <div className="text-sm bg-white bg-opacity-5 px-3 py-2 rounded-lg">
-            <span className="opacity-70">⏱️ Время записи:</span> <span className="text-neon-cyan font-bold">{formatTime(recordingTime)}</span>
-          </div>
-          <button
-            onClick={handleFullscreen}
-            className="btn-neon-cyan text-sm"
-          >
-            {isFullscreen ? '📱 Выйти' : '🖥️ Полный экран'}
-          </button>
-        </div>
-      </div>
+      <header className="flex-shrink-0">
+        <Card className="rounded-none border-x-0 border-t-0" glow="accent">
+          <CardContent className="p-3 flex justify-between items-center">
+            <div>
+              <h1 className="text-xl font-bold">{interview.candidateName}</h1>
+              <p className="text-sm text-white/60">{interview.vacancyTitle}</p>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="text-sm"><span className="text-white/60">Вопрос:</span> <span className="font-bold text-brand-highlight-aqua">{currentQuestion + 1}/{questions.length}</span></div>
+              <div className="text-sm"><span className="text-white/60">Время:</span> <span className="font-bold text-brand-highlight-aqua">{formatTime(recordingTime)}</span></div>
+              <Button onClick={handleFullscreen} variant="ghost" size="icon">
+                {isFullscreen ? <Minimize size={20} /> : <Maximize size={20} />}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </header>
 
-      <div className="flex h-screen">
-        {/* Video Section */}
-        <div className="flex-1 flex flex-col items-center justify-center p-8">
-          <div className="relative w-full max-w-2xl">
-            <video
-              ref={videoRef}
-              autoPlay
-              muted
-              playsInline
-              className="w-full rounded-lg shadow-2xl border-2 border-neon-blue border-opacity-30"
-            />
-            
-            {/* Recording indicator */}
+      {/* Main Content */}
+      <main className="flex-1 grid md:grid-cols-3 gap-4 p-4 overflow-hidden">
+        {/* Video & Question */}
+        <div className="md:col-span-2 flex flex-col gap-4 h-full">
+          <div className="flex-1 relative flex items-center justify-center bg-black/30 rounded-lg">
+            <video ref={videoRef} autoPlay muted playsInline className="h-full w-full object-contain rounded-lg" />
             {isRecording && (
-              <div className="absolute top-4 left-4 bg-red-600 text-white px-4 py-2 rounded-full flex items-center space-x-2 neon-glow-pink">
-                <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
-                <span className="text-sm font-bold">🔴 ИДЕТ ЗАПИСЬ</span>
+              <div className="absolute top-4 left-4 flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/80 text-white animate-pulse">
+                <Mic size={16} /> ЗАПИСЬ
               </div>
             )}
           </div>
-
-          {/* Question */}
-          <div className="mt-8 w-full max-w-2xl">
-            <div className="card-neon p-6">
-              <h2 className="text-2xl font-bold mb-4">❓ Вопрос {currentQuestion + 1}:</h2>
-              <p className="text-lg opacity-90 mb-6">{questions[currentQuestion]}</p>
-              
-              <div className="flex justify-center space-x-4">
-                <button
-                  onClick={isRecording ? stopRecording : startRecording}
-                  className={`${isRecording ? 'btn-neon-pink' : 'btn-neon'} text-lg px-6 py-3`}
-                >
-                  {isRecording ? (
-                    <>
-                      <span>⏹️</span>
-                      <span>Остановить запись</span>
-                    </>
-                  ) : (
-                    <>
-                      <span>🎤</span>
-                      <span>Начать запись</span>
-                    </>
-                  )}
-                </button>
-                
-                {currentQuestion < questions.length - 1 && (
-                  <button
-                    onClick={handleNextQuestion}
-                    className="btn-neon-cyan text-lg px-6 py-3"
-                    disabled={isRecording}
-                  >
-                    <span>➡️</span>
-                    <span>Следующий вопрос</span>
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
+          <Card glow="accent" className="flex-shrink-0">
+            <CardContent className="p-4">
+              <h2 className="font-bold text-xl mb-2 text-brand-highlight-aqua">Вопрос {currentQuestion + 1}</h2>
+              <Typewriter key={currentQuestion} text={questions[currentQuestion]} className="text-lg" />
+            </CardContent>
+          </Card>
         </div>
 
         {/* Sidebar */}
-        <div className="w-80 glass p-6 border-l border-neon-blue border-opacity-20">
-          <h3 className="text-2xl font-bold mb-6">📊 Статус интервью</h3>
-          
-          <div className="space-y-6">
-            <div className="card-neon p-4">
-              <h4 className="font-bold mb-3 text-lg">⚙️ Технические параметры</h4>
-              <div className="space-y-3 text-sm">
-                <div className="flex justify-between items-center">
-                  <span className="opacity-80">📹 Камера:</span>
-                  <span className="text-neon-green font-bold">✅ Активна</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="opacity-80">🎤 Микрофон:</span>
-                  <span className="text-neon-green font-bold">✅ Активен</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="opacity-80">💓 Heartbeat:</span>
-                  <span className={heartbeatActive ? "text-neon-green font-bold" : "text-red-400 font-bold"}>
-                    {heartbeatActive ? "✅ Активен" : "❌ Неактивен"}
-                  </span>
-                </div>
+        <div className="flex flex-col gap-4 overflow-y-auto">
+           <Card className="flex-shrink-0">
+            <CardContent className="p-4 space-y-3">
+              <h3 className="font-bold">Управление</h3>
+              <div className="flex gap-2">
+                <Button onClick={isRecording ? stopRecording : startRecording} variant={isRecording ? 'destructive' : 'default'} className="flex-1" isLoading={false}>
+                  {isRecording ? <Square className="mr-2" size={18} /> : <Mic className="mr-2" size={18} />}
+                  {isRecording ? 'Стоп' : 'Запись'}
+                </Button>
+                <Button onClick={handleNextQuestion} variant="secondary" className="flex-1" disabled={isRecording}>
+                  Далее <MoveRight className="ml-2" size={18} />
+                </Button>
               </div>
-            </div>
-
-            <div className="card-neon p-4">
-              <h4 className="font-bold mb-3 text-lg">📈 Прогресс</h4>
-              <div className="space-y-3">
-                <div className="flex justify-between text-sm">
-                  <span className="opacity-80">❓ Вопросы:</span>
-                  <span className="text-neon-blue font-bold">{currentQuestion + 1} / {questions.length}</span>
-                </div>
-                <div className="w-full bg-white bg-opacity-10 rounded-full h-3">
-                  <div
-                    className="bg-gradient-to-r from-neon-blue to-neon-purple h-3 rounded-full transition-all duration-300"
-                    style={{ width: `${((currentQuestion + 1) / questions.length) * 100}%` }}
-                  ></div>
-                </div>
-                <div className="text-center text-sm opacity-70">
-                  {Math.round(((currentQuestion + 1) / questions.length) * 100)}% завершено
-                </div>
+              {isRecording && <AudioVisualizer />}
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4 space-y-3">
+              <h3 className="font-bold">Статус</h3>
+              <div className="text-sm space-y-2">
+                <div className="flex justify-between items-center">{mediaStream?.getVideoTracks()[0]?.enabled ? <><Video size={16} /> Камера</> : <><VideoOff size={16} /> Камера</>} <span className={mediaStream?.getVideoTracks()[0]?.enabled ? 'text-green-400' : 'text-red-400'}>Активна</span></div>
+                <div className="flex justify-between items-center">{mediaStream?.getAudioTracks()[0]?.enabled ? <><Mic size={16} /> Микрофон</> : <><MicOff size={16} /> Микрофон</>} <span className={mediaStream?.getAudioTracks()[0]?.enabled ? 'text-green-400' : 'text-red-400'}>Активен</span></div>
+                <div className="flex justify-between items-center">{heartbeatActive ? <><Wifi size={16} /> Соединение</> : <><WifiOff size={16} /> Соединение</>} <span className={heartbeatActive ? 'text-green-400' : 'text-red-400'}>{heartbeatActive ? 'Стабильно' : 'Потеряно'}</span></div>
               </div>
-            </div>
-
-            <div className="card-neon p-4">
-              <h4 className="font-bold mb-3 text-lg">📋 Инструкции</h4>
-              <ul className="text-sm space-y-2 opacity-80">
-                <li className="flex items-center space-x-2">
-                  <span>🗣️</span>
-                  <span>Говорите четко и громко</span>
-                </li>
-                <li className="flex items-center space-x-2">
-                  <span>👁️</span>
-                  <span>Смотрите в камеру</span>
-                </li>
-                <li className="flex items-center space-x-2">
-                  <span>🚫</span>
-                  <span>Не переключайте вкладки</span>
-                </li>
-                <li className="flex items-center space-x-2">
-                  <span>💬</span>
-                  <span>Отвечайте развернуто</span>
-                </li>
-              </ul>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
+           <Card>
+            <CardContent className="p-4">
+              <h3 className="font-bold">Прогресс</h3>
+              <div className="w-full bg-white/10 rounded-full h-2.5 mt-2">
+                <motion.div className="bg-brand-accent h-2.5 rounded-full" initial={{width: '0%'}} animate={{width: `${((currentQuestion + 1) / questions.length) * 100}%`}} />
+              </div>
+              <p className="text-xs text-right mt-1 text-white/60">{currentQuestion + 1} из {questions.length} отвечено</p>
+            </CardContent>
+          </Card>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
