@@ -4,6 +4,16 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search, UserPlus, Filter } from 'lucide-react';
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/modal";
+import { Textarea } from "@/components/ui/textarea";
 
 // Mock data for candidates
 const mockCandidates = [
@@ -37,10 +47,30 @@ const Dashboard: React.FC = () => {
           <h1 className="text-4xl font-bold text-white">Панель кандидатов</h1>
           <p className="text-white/60 mt-1">Управляйте и просматривайте всех ваших кандидатов.</p>
         </div>
-        <Button>
-          <UserPlus className="mr-2 h-5 w-5" />
-          Добавить кандидата
-        </Button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button>
+              <UserPlus className="mr-2 h-5 w-5" />
+              Добавить кандидата
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Добавить нового кандидата</DialogTitle>
+              <DialogDescription>
+                Заполните информацию ниже, чтобы добавить нового кандидата в систему.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <Input id="name" placeholder="Имя кандидата" />
+              <Input id="role" placeholder="Должность" />
+              <Textarea placeholder="Дополнительные заметки..." />
+            </div>
+            <DialogFooter>
+              <Button type="submit">Сохранить</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
 
       {/* Filters and Search */}

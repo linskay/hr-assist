@@ -1,5 +1,8 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { Button } from '@/components/ui/button';
+import { Settings, LogOut } from 'lucide-react';
 
 export const Header: React.FC = () => {
   const { user, logout, hasRole } = useAuth();
@@ -65,13 +68,17 @@ export const Header: React.FC = () => {
                   )}
                 </div>
                 
-                <button
-                  onClick={handleLogout}
-                  className="btn-neon-purple flex items-center space-x-2"
-                >
-                  <span>🚪</span>
-                  <span>Выйти</span>
-                </button>
+                <div className="flex items-center space-x-2">
+                  <Button asChild variant="ghost" size="icon">
+                    <Link to="/app/settings">
+                      <Settings className="h-5 w-5" />
+                    </Link>
+                  </Button>
+                  <Button onClick={handleLogout} variant="destructive">
+                    <LogOut className="mr-2 h-5 w-5" />
+                    Выйти
+                  </Button>
+                </div>
               </>
             )}
           </div>
