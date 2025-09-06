@@ -1,10 +1,10 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
-
+import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
 
 const cardVariants = cva(
-  "glass-card transition-all duration-300",
+  "glass-card",
   {
     variants: {
       glow: {
@@ -26,8 +26,10 @@ export interface CardProps
 
 const Card = React.forwardRef<HTMLDivElement, CardProps>(
   ({ className, glow, ...props }, ref) => (
-    <div
+    <motion.div
       ref={ref}
+      whileHover={{ scale: 1.02, y: -5 }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
       className={cn(cardVariants({ glow, className }))}
       {...props}
     />

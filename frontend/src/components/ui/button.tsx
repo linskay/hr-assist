@@ -50,9 +50,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           disabled={isLoading || props.disabled}
           {...props}
         >
-          <span className="relative z-10">
-            {isLoading ? <LoaderCircle className="mr-2 h-5 w-5 animate-spin" /> : null}
-            {children}
+          <span className="relative z-10 flex items-center justify-center">
+            {isLoading ? <LoaderCircle className="h-5 w-5 animate-spin" /> : children}
           </span>
           <span className="absolute inset-0 rounded-xl pointer-events-none">
             <span className="absolute inset-0 rounded-xl border-2 border-transparent border-image-gradient animate-border-path" />
