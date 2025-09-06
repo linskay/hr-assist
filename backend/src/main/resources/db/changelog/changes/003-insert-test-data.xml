@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="017-insert-test-users" author="hr-assistant">
+        <insert tableName="users">
+            <column name="username" value="admin"/>
+            <column name="email" value="admin@hr-assistant.com"/>
+            <column name="password_hash" value="$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVEFDi"/>
+            <column name="first_name" value="Admin"/>
+            <column name="last_name" value="User"/>
+            <column name="role" value="ADMIN"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+        
+        <insert tableName="users">
+            <column name="username" value="hr_manager"/>
+            <column name="email" value="hr@hr-assistant.com"/>
+            <column name="password_hash" value="$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVEFDi"/>
+            <column name="first_name" value="HR"/>
+            <column name="last_name" value="Manager"/>
+            <column name="role" value="HR_MANAGER"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+        
+        <insert tableName="users">
+            <column name="username" value="interviewer1"/>
+            <column name="email" value="interviewer1@hr-assistant.com"/>
+            <column name="password_hash" value="$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVEFDi"/>
+            <column name="first_name" value="John"/>
+            <column name="last_name" value="Doe"/>
+            <column name="role" value="INTERVIEWER"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+        
+        <insert tableName="users">
+            <column name="username" value="interviewer2"/>
+            <column name="email" value="interviewer2@hr-assistant.com"/>
+            <column name="password_hash" value="$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVEFDi"/>
+            <column name="first_name" value="Jane"/>
+            <column name="last_name" value="Smith"/>
+            <column name="role" value="INTERVIEWER"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="018-insert-test-vacancies" author="hr-assistant">
+        <insert tableName="vacancies">
+            <column name="title" value="Senior Java Developer"/>
+            <column name="description" value="We are looking for an experienced Java developer to join our team. You will be responsible for developing and maintaining high-quality software solutions."/>
+            <column name="requirements" value="5+ years of Java experience, Spring Framework, REST APIs, Microservices, PostgreSQL, Docker, Kubernetes"/>
+            <column name="salary_min" value="80000.00"/>
+            <column name="salary_max" value="120000.00"/>
+            <column name="location" value="Remote"/>
+            <column name="employment_type" value="FULL_TIME"/>
+            <column name="experience_level" value="SENIOR"/>
+            <column name="status" value="ACTIVE"/>
+            <column name="created_by" value="1"/>
+        </insert>
+        
+        <insert tableName="vacancies">
+            <column name="title" value="Frontend React Developer"/>
+            <column name="description" value="Join our frontend team to build amazing user experiences with React and modern web technologies."/>
+            <column name="requirements" value="3+ years of React experience, TypeScript, Redux, CSS/SCSS, Webpack, Jest"/>
+            <column name="salary_min" value="60000.00"/>
+            <column name="salary_max" value="90000.00"/>
+            <column name="location" value="New York, NY"/>
+            <column name="employment_type" value="FULL_TIME"/>
+            <column name="experience_level" value="MID"/>
+            <column name="status" value="ACTIVE"/>
+            <column name="created_by" value="2"/>
+        </insert>
+        
+        <insert tableName="vacancies">
+            <column name="title" value="DevOps Engineer"/>
+            <column name="description" value="We need a DevOps engineer to help us scale our infrastructure and improve our deployment processes."/>
+            <column name="requirements" value="AWS/Azure, Docker, Kubernetes, Terraform, CI/CD, Monitoring, Linux"/>
+            <column name="salary_min" value="70000.00"/>
+            <column name="salary_max" value="110000.00"/>
+            <column name="location" value="San Francisco, CA"/>
+            <column name="employment_type" value="FULL_TIME"/>
+            <column name="experience_level" value="SENIOR"/>
+            <column name="status" value="ACTIVE"/>
+            <column name="created_by" value="1"/>
+        </insert>
+        
+        <insert tableName="vacancies">
+            <column name="title" value="Data Scientist"/>
+            <column name="description" value="Looking for a data scientist to help us build ML models and analyze large datasets."/>
+            <column name="requirements" value="Python, Machine Learning, TensorFlow/PyTorch, SQL, Statistics, Data Visualization"/>
+            <column name="salary_min" value="75000.00"/>
+            <column name="salary_max" value="115000.00"/>
+            <column name="location" value="Boston, MA"/>
+            <column name="employment_type" value="FULL_TIME"/>
+            <column name="experience_level" value="SENIOR"/>
+            <column name="status" value="ACTIVE"/>
+            <column name="created_by" value="2"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="019-insert-test-candidates" author="hr-assistant">
+        <insert tableName="candidates">
+            <column name="first_name" value="Alice"/>
+            <column name="last_name" value="Johnson"/>
+            <column name="email" value="alice.johnson@email.com"/>
+            <column name="phone" value="+1-555-0101"/>
+            <column name="resume_url" value="https://example.com/resumes/alice_johnson.pdf"/>
+            <column name="cover_letter" value="I am excited to apply for the Senior Java Developer position. With 6 years of experience in Java development, I believe I would be a great fit for your team."/>
+            <column name="status" value="NEW"/>
+        </insert>
+        
+        <insert tableName="candidates">
+            <column name="first_name" value="Bob"/>
+            <column name="last_name" value="Wilson"/>
+            <column name="email" value="bob.wilson@email.com"/>
+            <column name="phone" value="+1-555-0102"/>
+            <column name="resume_url" value="https://example.com/resumes/bob_wilson.pdf"/>
+            <column name="cover_letter" value="I am a passionate React developer with 4 years of experience building modern web applications. I would love to contribute to your frontend team."/>
+            <column name="status" value="NEW"/>
+        </insert>
+        
+        <insert tableName="candidates">
+            <column name="first_name" value="Carol"/>
+            <column name="last_name" value="Davis"/>
+            <column name="email" value="carol.davis@email.com"/>
+            <column name="phone" value="+1-555-0103"/>
+            <column name="resume_url" value="https://example.com/resumes/carol_davis.pdf"/>
+            <column name="cover_letter" value="As a DevOps engineer with 5 years of experience in cloud infrastructure, I am excited about the opportunity to help scale your systems."/>
+            <column name="status" value="NEW"/>
+        </insert>
+        
+        <insert tableName="candidates">
+            <column name="first_name" value="David"/>
+            <column name="last_name" value="Brown"/>
+            <column name="email" value="david.brown@email.com"/>
+            <column name="phone" value="+1-555-0104"/>
+            <column name="resume_url" value="https://example.com/resumes/david_brown.pdf"/>
+            <column name="cover_letter" value="I am a data scientist with expertise in machine learning and statistical analysis. I would be thrilled to join your data team."/>
+            <column name="status" value="NEW"/>
+        </insert>
+        
+        <insert tableName="candidates">
+            <column name="first_name" value="Eva"/>
+            <column name="last_name" value="Garcia"/>
+            <column name="email" value="eva.garcia@email.com"/>
+            <column name="phone" value="+1-555-0105"/>
+            <column name="resume_url" value="https://example.com/resumes/eva_garcia.pdf"/>
+            <column name="cover_letter" value="I am an experienced Java developer with a strong background in microservices architecture. I am excited about the opportunity to work with your team."/>
+            <column name="status" value="NEW"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="020-insert-test-interviews" author="hr-assistant">
+        <insert tableName="interviews">
+            <column name="candidate_id" value="1"/>
+            <column name="vacancy_id" value="1"/>
+            <column name="interviewer_id" value="3"/>
+            <column name="scheduled_at" value="2024-01-15 10:00:00"/>
+            <column name="duration_minutes" value="60"/>
+            <column name="type" value="TECHNICAL"/>
+            <column name="status" value="SCHEDULED"/>
+            <column name="notes" value="Technical interview for Senior Java Developer position"/>
+        </insert>
+        
+        <insert tableName="interviews">
+            <column name="candidate_id" value="2"/>
+            <column name="vacancy_id" value="2"/>
+            <column name="interviewer_id" value="4"/>
+            <column name="scheduled_at" value="2024-01-16 14:00:00"/>
+            <column name="duration_minutes" value="45"/>
+            <column name="type" value="TECHNICAL"/>
+            <column name="status" value="SCHEDULED"/>
+            <column name="notes" value="Technical interview for Frontend React Developer position"/>
+        </insert>
+        
+        <insert tableName="interviews">
+            <column name="candidate_id" value="3"/>
+            <column name="vacancy_id" value="3"/>
+            <column name="interviewer_id" value="3"/>
+            <column name="scheduled_at" value="2024-01-17 09:00:00"/>
+            <column name="duration_minutes" value="90"/>
+            <column name="type" value="TECHNICAL"/>
+            <column name="status" value="SCHEDULED"/>
+            <column name="notes" value="Technical interview for DevOps Engineer position"/>
+        </insert>
+        
+        <insert tableName="interviews">
+            <column name="candidate_id" value="4"/>
+            <column name="vacancy_id" value="4"/>
+            <column name="interviewer_id" value="4"/>
+            <column name="scheduled_at" value="2024-01-18 11:00:00"/>
+            <column name="duration_minutes" value="75"/>
+            <column name="type" value="TECHNICAL"/>
+            <column name="status" value="SCHEDULED"/>
+            <column name="notes" value="Technical interview for Data Scientist position"/>
+        </insert>
+        
+        <insert tableName="interviews">
+            <column name="candidate_id" value="5"/>
+            <column name="vacancy_id" value="1"/>
+            <column name="interviewer_id" value="3"/>
+            <column name="scheduled_at" value="2024-01-19 15:00:00"/>
+            <column name="duration_minutes" value="60"/>
+            <column name="type" value="TECHNICAL"/>
+            <column name="status" value="SCHEDULED"/>
+            <column name="notes" value="Technical interview for Senior Java Developer position"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

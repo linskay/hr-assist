@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="001-create-users-table" author="hr-assistant">
+        <createTable tableName="users">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="username" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="email" type="VARCHAR(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="password_hash" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="first_name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="002-create-vacancies-table" author="hr-assistant">
+        <createTable tableName="vacancies">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="requirements" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="salary_min" type="DECIMAL(10,2)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="salary_max" type="DECIMAL(10,2)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="location" type="VARCHAR(100)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="employment_type" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="experience_level" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(20)" defaultValue="ACTIVE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        
+        <addForeignKeyConstraint
+                baseTableName="vacancies"
+                baseColumnNames="created_by"
+                constraintName="fk_vacancies_created_by"
+                referencedTableName="users"
+                referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="003-create-candidates-table" author="hr-assistant">
+        <createTable tableName="candidates">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="first_name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="phone" type="VARCHAR(20)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="resume_url" type="VARCHAR(500)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="cover_letter" type="TEXT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="status" type="VARCHAR(20)" defaultValue="NEW">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>  
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="004-create-interviews-table" author="hr-assistant">
+        <createTable tableName="interviews">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="candidate_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="vacancy_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="interviewer_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="scheduled_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="duration_minutes" type="INTEGER" defaultValue="60">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(20)" defaultValue="SCHEDULED">
+                <constraints nullable="false"/>
+            </column>
+            <column name="notes" type="TEXT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        
+        <addForeignKeyConstraint
+                baseTableName="interviews"
+                baseColumnNames="candidate_id"
+                constraintName="fk_interviews_candidate"
+                referencedTableName="candidates"
+                referencedColumnNames="id"/>
+                
+        <addForeignKeyConstraint
+                baseTableName="interviews"
+                baseColumnNames="vacancy_id"
+                constraintName="fk_interviews_vacancy"
+                referencedTableName="vacancies"
+                referencedColumnNames="id"/>
+                
+        <addForeignKeyConstraint
+                baseTableName="interviews"
+                baseColumnNames="interviewer_id"
+                constraintName="fk_interviews_interviewer"
+                referencedTableName="users"
+                referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="005-create-interview-sessions-table" author="hr-assistant">
+        <createTable tableName="interview_sessions">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="interview_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="session_token" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="started_at" type="TIMESTAMP">
+                <constraints nullable="true"/>
+            </column>
+            <column name="ended_at" type="TIMESTAMP">
+                <constraints nullable="true"/>
+            </column>
+            <column name="status" type="VARCHAR(20)" defaultValue="PENDING">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        
+        <addForeignKeyConstraint
+                baseTableName="interview_sessions"
+                baseColumnNames="interview_id"
+                constraintName="fk_interview_sessions_interview"
+                referencedTableName="interviews"
+                referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="006-create-interview-responses-table" author="hr-assistant">
+        <createTable tableName="interview_responses">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="session_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="question_text" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="response_text" type="TEXT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="response_audio_url" type="VARCHAR(500)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="response_video_url" type="VARCHAR(500)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="transcription" type="TEXT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="sentiment_score" type="DECIMAL(3,2)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="confidence_score" type="DECIMAL(3,2)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        
+        <addForeignKeyConstraint
+                baseTableName="interview_responses"
+                baseColumnNames="session_id"
+                constraintName="fk_interview_responses_session"
+                referencedTableName="interview_sessions"
+                referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="007-create-antifraud-checks-table" author="hr-assistant">
+        <createTable tableName="antifraud_checks">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="session_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="check_type" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="result" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="score" type="DECIMAL(3,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="details" type="JSONB">
+                <constraints nullable="true"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        
+        <addForeignKeyConstraint
+                baseTableName="antifraud_checks"
+                baseColumnNames="session_id"
+                constraintName="fk_antifraud_checks_session"
+                referencedTableName="interview_sessions"
+                referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="008-create-interview-analysis-table" author="hr-assistant">
+        <createTable tableName="interview_analysis">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="session_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="overall_score" type="DECIMAL(3,2)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="technical_score" type="DECIMAL(3,2)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="communication_score" type="DECIMAL(3,2)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="cultural_fit_score" type="DECIMAL(3,2)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="recommendation" type="VARCHAR(20)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="summary" type="TEXT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="strengths" type="TEXT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="weaknesses" type="TEXT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        
+        <addForeignKeyConstraint
+                baseTableName="interview_analysis"
+                baseColumnNames="session_id"
+                constraintName="fk_interview_analysis_session"
+                referencedTableName="interview_sessions"
+                referencedColumnNames="id"/>
+    </changeSet>
+
+</databaseChangeLog>
