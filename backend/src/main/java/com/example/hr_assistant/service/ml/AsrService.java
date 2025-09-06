@@ -5,16 +5,13 @@ package com.example.hr_assistant.service.ml;
 import ai.djl.ndarray.NDArray;
 import ai.djl.ndarray.NDList;
 import ai.djl.ndarray.NDManager;
-import ai.djl.translate.TranslateException;
 import com.example.hr_assistant.model.Transcript;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Map;
 
 /**
  * Сервис для автоматического распознавания речи (ASR)

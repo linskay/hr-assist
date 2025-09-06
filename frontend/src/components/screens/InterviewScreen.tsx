@@ -1,14 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { Mic, MicOff, Video, VideoOff, Play, Pause, Square } from 'lucide-react';
 import { useInterview, useStartInterview, useHeartbeat, useInterviewRecording } from '../../hooks/useInterview';
-import { Button } from '../ui/button';
-import { Card } from '../ui/card';
 
-interface InterviewScreenProps {}
-
-export const InterviewScreen: React.FC<InterviewScreenProps> = () => {
+export default function InterviewScreen() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const interviewId = parseInt(id || '0');
@@ -118,8 +113,8 @@ export const InterviewScreen: React.FC<InterviewScreenProps> = () => {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Загрузка интервью...</p>
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-neon-blue mx-auto"></div>
+          <p className="mt-4 opacity-80">Загрузка интервью...</p>
         </div>
       </div>
     );
@@ -129,10 +124,13 @@ export const InterviewScreen: React.FC<InterviewScreenProps> = () => {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Интервью не найдено</h1>
-          <Button onClick={() => navigate('/dashboard')}>
-            Вернуться к дашборду
-          </Button>
+          <h1 className="text-3xl font-bold mb-4">❌ Интервью не найдено</h1>
+          <button 
+            onClick={() => navigate('/dashboard')}
+            className="btn-neon"
+          >
+            🏠 Вернуться к дашборду
+          </button>
         </div>
       </div>
     );
@@ -140,33 +138,33 @@ export const InterviewScreen: React.FC<InterviewScreenProps> = () => {
 
   if (interview.status === 'CREATED') {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <Card className="w-full max-w-2xl p-8">
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="card-neon w-full max-w-2xl p-8">
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-900 mb-6">
-              Добро пожаловать на интервью!
+            <h1 className="text-5xl font-black text-gradient mb-6">
+              🎤 Добро пожаловать на интервью!
             </h1>
             
             <div className="mb-8">
-              <h2 className="text-xl font-semibold mb-4">Информация об интервью:</h2>
-              <div className="text-left space-y-2">
-                <p><strong>Кандидат:</strong> {interview.candidateName}</p>
-                <p><strong>Вакансия:</strong> {interview.vacancyTitle}</p>
-                <p><strong>Статус:</strong> {interview.status}</p>
+              <h2 className="text-2xl font-bold mb-4">📋 Информация об интервью:</h2>
+              <div className="text-left space-y-3 bg-white bg-opacity-5 p-4 rounded-lg">
+                <p><strong>👤 Кандидат:</strong> {interview.candidateName}</p>
+                <p><strong>💼 Вакансия:</strong> {interview.vacancyTitle}</p>
+                <p><strong>📊 Статус:</strong> {interview.status}</p>
               </div>
             </div>
 
             <div className="mb-8">
-              <h2 className="text-xl font-semibold mb-4">Согласие на обработку данных:</h2>
+              <h2 className="text-2xl font-bold mb-4">📝 Согласие на обработку данных:</h2>
               <div className="text-left space-y-4">
                 <label className="flex items-start space-x-3">
                   <input
                     type="checkbox"
                     checked={consentGiven}
                     onChange={(e) => handleConsentChange(e.target.checked)}
-                    className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    className="mt-1 h-5 w-5 text-neon-blue focus:ring-neon-blue border-neon-blue rounded"
                   />
-                  <span className="text-sm text-gray-700">
+                  <span className="text-sm opacity-80">
                     Я даю согласие на запись и обработку моих персональных данных, 
                     включая аудио и видео материалы, для целей проведения интервью 
                     и оценки моих профессиональных качеств.
@@ -176,55 +174,53 @@ export const InterviewScreen: React.FC<InterviewScreenProps> = () => {
             </div>
 
             <div className="mb-8">
-              <h2 className="text-xl font-semibold mb-4">Технические требования:</h2>
-              <ul className="text-left space-y-2 text-sm text-gray-600">
-                <li>• Стабильное интернет-соединение</li>
-                <li>• Рабочая камера и микрофон</li>
-                <li>• Рекомендуется использовать Chrome или Firefox</li>
-                <li>• Не переключайтесь между вкладками во время интервью</li>
+              <h2 className="text-2xl font-bold mb-4">⚙️ Технические требования:</h2>
+              <ul className="text-left space-y-2 text-sm opacity-70 bg-white bg-opacity-5 p-4 rounded-lg">
+                <li>🌐 Стабильное интернет-соединение</li>
+                <li>📹 Рабочая камера и микрофон</li>
+                <li>🌍 Рекомендуется использовать Chrome или Firefox</li>
+                <li>🚫 Не переключайтесь между вкладками во время интервью</li>
               </ul>
             </div>
 
-            <Button
+            <button
               onClick={handleStartInterview}
               disabled={!consentGiven || startInterviewMutation.isLoading}
-              className="w-full"
-              size="lg"
+              className={`btn-neon w-full text-lg py-4 ${!consentGiven ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
-              {startInterviewMutation.isLoading ? 'Запуск...' : 'Начать интервью'}
-            </Button>
+              {startInterviewMutation.isLoading ? '🚀 Запуск...' : '🎬 Начать интервью'}
+            </button>
           </div>
-        </Card>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen text-white">
       {/* Header */}
-      <div className="bg-gray-800 p-4 flex justify-between items-center">
+      <div className="glass border-b border-neon-blue border-opacity-20 p-4 flex justify-between items-center">
         <div>
-          <h1 className="text-xl font-bold">{interview.candidateName}</h1>
-          <p className="text-gray-400">{interview.vacancyTitle}</p>
+          <h1 className="text-2xl font-bold text-gradient">👤 {interview.candidateName}</h1>
+          <p className="opacity-70">💼 {interview.vacancyTitle}</p>
         </div>
-        <div className="flex items-center space-x-4">
-          <div className="text-sm">
-            <span className="text-gray-400">Вопрос:</span> {currentQuestion + 1} из {questions.length}
+        <div className="flex items-center space-x-6">
+          <div className="text-sm bg-white bg-opacity-5 px-3 py-2 rounded-lg">
+            <span className="opacity-70">❓ Вопрос:</span> <span className="text-neon-blue font-bold">{currentQuestion + 1} из {questions.length}</span>
           </div>
-          <div className="text-sm">
-            <span className="text-gray-400">Время записи:</span> {formatTime(recordingTime)}
+          <div className="text-sm bg-white bg-opacity-5 px-3 py-2 rounded-lg">
+            <span className="opacity-70">⏱️ Время записи:</span> <span className="text-neon-cyan font-bold">{formatTime(recordingTime)}</span>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
+          <button
             onClick={handleFullscreen}
+            className="btn-neon-cyan text-sm"
           >
-            {isFullscreen ? 'Выйти' : 'Полный экран'}
-          </Button>
+            {isFullscreen ? '📱 Выйти' : '🖥️ Полный экран'}
+          </button>
         </div>
       </div>
 
-      <div className="flex h-[calc(100vh-80px)]">
+      <div className="flex h-screen">
         {/* Video Section */}
         <div className="flex-1 flex flex-col items-center justify-center p-8">
           <div className="relative w-full max-w-2xl">
@@ -233,107 +229,120 @@ export const InterviewScreen: React.FC<InterviewScreenProps> = () => {
               autoPlay
               muted
               playsInline
-              className="w-full rounded-lg shadow-2xl"
+              className="w-full rounded-lg shadow-2xl border-2 border-neon-blue border-opacity-30"
             />
             
             {/* Recording indicator */}
             {isRecording && (
-              <div className="absolute top-4 left-4 bg-red-600 text-white px-3 py-1 rounded-full flex items-center space-x-2">
-                <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-                <span className="text-sm font-medium">ИДЕТ ЗАПИСЬ</span>
+              <div className="absolute top-4 left-4 bg-red-600 text-white px-4 py-2 rounded-full flex items-center space-x-2 neon-glow-pink">
+                <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
+                <span className="text-sm font-bold">🔴 ИДЕТ ЗАПИСЬ</span>
               </div>
             )}
           </div>
 
           {/* Question */}
           <div className="mt-8 w-full max-w-2xl">
-            <Card className="p-6 bg-gray-800 border-gray-700">
-              <h2 className="text-xl font-semibold mb-4">Вопрос {currentQuestion + 1}:</h2>
-              <p className="text-lg text-gray-300 mb-6">{questions[currentQuestion]}</p>
+            <div className="card-neon p-6">
+              <h2 className="text-2xl font-bold mb-4">❓ Вопрос {currentQuestion + 1}:</h2>
+              <p className="text-lg opacity-90 mb-6">{questions[currentQuestion]}</p>
               
               <div className="flex justify-center space-x-4">
-                <Button
+                <button
                   onClick={isRecording ? stopRecording : startRecording}
-                  variant={isRecording ? "destructive" : "default"}
-                  size="lg"
-                  className="flex items-center space-x-2"
+                  className={`${isRecording ? 'btn-neon-pink' : 'btn-neon'} text-lg px-6 py-3`}
                 >
                   {isRecording ? (
                     <>
-                      <Square className="w-5 h-5" />
+                      <span>⏹️</span>
                       <span>Остановить запись</span>
                     </>
                   ) : (
                     <>
-                      <Mic className="w-5 h-5" />
+                      <span>🎤</span>
                       <span>Начать запись</span>
                     </>
                   )}
-                </Button>
+                </button>
                 
                 {currentQuestion < questions.length - 1 && (
-                  <Button
+                  <button
                     onClick={handleNextQuestion}
-                    variant="outline"
-                    size="lg"
+                    className="btn-neon-cyan text-lg px-6 py-3"
                     disabled={isRecording}
                   >
-                    Следующий вопрос
-                  </Button>
+                    <span>➡️</span>
+                    <span>Следующий вопрос</span>
+                  </button>
                 )}
               </div>
-            </Card>
+            </div>
           </div>
         </div>
 
         {/* Sidebar */}
-        <div className="w-80 bg-gray-800 p-6">
-          <h3 className="text-lg font-semibold mb-4">Статус интервью</h3>
+        <div className="w-80 glass p-6 border-l border-neon-blue border-opacity-20">
+          <h3 className="text-2xl font-bold mb-6">📊 Статус интервью</h3>
           
-          <div className="space-y-4">
-            <div className="bg-gray-700 p-4 rounded-lg">
-              <h4 className="font-medium mb-2">Технические параметры</h4>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span>Камера:</span>
-                  <span className="text-green-400">✓ Активна</span>
+          <div className="space-y-6">
+            <div className="card-neon p-4">
+              <h4 className="font-bold mb-3 text-lg">⚙️ Технические параметры</h4>
+              <div className="space-y-3 text-sm">
+                <div className="flex justify-between items-center">
+                  <span className="opacity-80">📹 Камера:</span>
+                  <span className="text-neon-green font-bold">✅ Активна</span>
                 </div>
-                <div className="flex justify-between">
-                  <span>Микрофон:</span>
-                  <span className="text-green-400">✓ Активен</span>
+                <div className="flex justify-between items-center">
+                  <span className="opacity-80">🎤 Микрофон:</span>
+                  <span className="text-neon-green font-bold">✅ Активен</span>
                 </div>
-                <div className="flex justify-between">
-                  <span>Heartbeat:</span>
-                  <span className={heartbeatActive ? "text-green-400" : "text-red-400"}>
-                    {heartbeatActive ? "✓ Активен" : "✗ Неактивен"}
+                <div className="flex justify-between items-center">
+                  <span className="opacity-80">💓 Heartbeat:</span>
+                  <span className={heartbeatActive ? "text-neon-green font-bold" : "text-red-400 font-bold"}>
+                    {heartbeatActive ? "✅ Активен" : "❌ Неактивен"}
                   </span>
                 </div>
               </div>
             </div>
 
-            <div className="bg-gray-700 p-4 rounded-lg">
-              <h4 className="font-medium mb-2">Прогресс</h4>
-              <div className="space-y-2">
+            <div className="card-neon p-4">
+              <h4 className="font-bold mb-3 text-lg">📈 Прогресс</h4>
+              <div className="space-y-3">
                 <div className="flex justify-between text-sm">
-                  <span>Вопросы:</span>
-                  <span>{currentQuestion + 1} / {questions.length}</span>
+                  <span className="opacity-80">❓ Вопросы:</span>
+                  <span className="text-neon-blue font-bold">{currentQuestion + 1} / {questions.length}</span>
                 </div>
-                <div className="w-full bg-gray-600 rounded-full h-2">
+                <div className="w-full bg-white bg-opacity-10 rounded-full h-3">
                   <div
-                    className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                    className="bg-gradient-to-r from-neon-blue to-neon-purple h-3 rounded-full transition-all duration-300"
                     style={{ width: `${((currentQuestion + 1) / questions.length) * 100}%` }}
                   ></div>
+                </div>
+                <div className="text-center text-sm opacity-70">
+                  {Math.round(((currentQuestion + 1) / questions.length) * 100)}% завершено
                 </div>
               </div>
             </div>
 
-            <div className="bg-gray-700 p-4 rounded-lg">
-              <h4 className="font-medium mb-2">Инструкции</h4>
-              <ul className="text-sm space-y-1 text-gray-300">
-                <li>• Говорите четко и громко</li>
-                <li>• Смотрите в камеру</li>
-                <li>• Не переключайте вкладки</li>
-                <li>• Отвечайте развернуто</li>
+            <div className="card-neon p-4">
+              <h4 className="font-bold mb-3 text-lg">📋 Инструкции</h4>
+              <ul className="text-sm space-y-2 opacity-80">
+                <li className="flex items-center space-x-2">
+                  <span>🗣️</span>
+                  <span>Говорите четко и громко</span>
+                </li>
+                <li className="flex items-center space-x-2">
+                  <span>👁️</span>
+                  <span>Смотрите в камеру</span>
+                </li>
+                <li className="flex items-center space-x-2">
+                  <span>🚫</span>
+                  <span>Не переключайте вкладки</span>
+                </li>
+                <li className="flex items-center space-x-2">
+                  <span>💬</span>
+                  <span>Отвечайте развернуто</span>
+                </li>
               </ul>
             </div>
           </div>
@@ -341,4 +350,4 @@ export const InterviewScreen: React.FC<InterviewScreenProps> = () => {
       </div>
     </div>
   );
-};
+}

@@ -3,14 +3,14 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { Toaster } from 'react-hot-toast';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { Layout } from './components/layout/Layout';
-import { Dashboard } from './components/screens/Dashboard';
-import { InterviewScreen } from './components/screens/InterviewScreen';
-import { ReportScreen } from './components/screens/ReportScreen';
+import Dashboard from './components/screens/Dashboard';
+import InterviewScreen from './components/screens/InterviewScreen';
+import ReportScreen from './components/screens/ReportScreen';
 
 function App() {
   return (
     <Router>
-      <div className="App">
+      <div className="gradient-bg particles min-h-screen">
         <Routes>
           <Route path="/login" element={<ProtectedRoute />} />
           <Route
@@ -34,21 +34,36 @@ function App() {
           toastOptions={{
             duration: 4000,
             style: {
-              background: '#363636',
+              background: 'rgba(0, 0, 0, 0.8)',
               color: '#fff',
+              border: '1px solid #00BFFF',
+              borderRadius: '8px',
+              backdropFilter: 'blur(10px)',
             },
             success: {
               duration: 3000,
+              style: {
+                background: 'rgba(0, 0, 0, 0.8)',
+                color: '#00FF00',
+                border: '1px solid #00FF00',
+                boxShadow: '0 0 10px #00FF00',
+              },
               iconTheme: {
-                primary: '#4ade80',
-                secondary: '#fff',
+                primary: '#00FF00',
+                secondary: '#000',
               },
             },
             error: {
               duration: 5000,
+              style: {
+                background: 'rgba(0, 0, 0, 0.8)',
+                color: '#ff6b6b',
+                border: '1px solid #ff6b6b',
+                boxShadow: '0 0 10px #ff6b6b',
+              },
               iconTheme: {
-                primary: '#ef4444',
-                secondary: '#fff',
+                primary: '#ff6b6b',
+                secondary: '#000',
               },
             },
           }}
