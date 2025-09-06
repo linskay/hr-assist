@@ -22,42 +22,52 @@ export interface LoginResponse {
 export interface Vacancy {
   id: number;
   title: string;
-  grade: string;
   description: string;
-  requirements: Record<string, number>;
+  requirements: string;
+  salaryMin?: number;
+  salaryMax?: number;
+  location?: string;
+  employmentType: 'FULL_TIME' | 'PART_TIME' | 'CONTRACT' | 'INTERNSHIP';
+  experienceLevel: 'JUNIOR' | 'MID' | 'SENIOR' | 'LEAD';
+  status: 'ACTIVE' | 'INACTIVE' | 'CLOSED';
+  createdBy: number;
   createdAt: string;
-  isActive: boolean;
+  updatedAt: string;
 }
 
 export interface VacancyCreateRequest {
   title: string;
-  grade: string;
   description: string;
-  requirements: Record<string, number>;
+  requirements: string;
+  salaryMin?: number;
+  salaryMax?: number;
+  location?: string;
+  employmentType: 'FULL_TIME' | 'PART_TIME' | 'CONTRACT' | 'INTERNSHIP';
+  experienceLevel: 'JUNIOR' | 'MID' | 'SENIOR' | 'LEAD';
 }
 
 export interface Interview {
   id: number;
+  candidateId: number;
   vacancyId: number;
-  vacancyTitle: string;
-  candidateName: string;
-  candidateEmail?: string;
-  candidatePhone?: string;
-  status: 'CREATED' | 'STARTED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED' | 'FAILED';
-  startedAt?: string;
-  finishedAt?: string;
-  fraudScore?: number;
-  matchingScore?: number;
-  consentGiven: boolean;
-  consentTimestamp?: string;
+  interviewerId: number;
+  scheduledAt: string;
+  durationMinutes: number;
+  type: 'TECHNICAL' | 'BEHAVIORAL' | 'HR' | 'FINAL';
+  status: 'SCHEDULED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
+  notes?: string;
   createdAt: string;
+  updatedAt: string;
 }
 
 export interface InterviewCreateRequest {
+  candidateId: number;
   vacancyId: number;
-  candidateName: string;
-  candidateEmail?: string;
-  candidatePhone?: string;
+  interviewerId: number;
+  scheduledAt: string;
+  durationMinutes: number;
+  type: 'TECHNICAL' | 'BEHAVIORAL' | 'HR' | 'FINAL';
+  notes?: string;
 }
 
 export interface Question {
@@ -162,6 +172,9 @@ export interface MediaUploadResponse {
 
 export interface HeartbeatRequest {
   timestamp?: number;
+  browserInfo?: string;
+  screenResolution?: string;
+  timezone?: string;
   userAgent?: string;
   windowWidth?: number;
   windowHeight?: number;

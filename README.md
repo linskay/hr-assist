@@ -216,27 +216,243 @@ antifraud.threshold.review=0.6
 
 ## 🧪 Тестирование
 
-### Запуск тестов
+### Подготовка к тестированию
+
+#### 1. Настройка базы данных
 ```bash
-# Backend тесты
+# Создание тестовой базы данных
+docker-compose exec postgres psql -U hr_user -c "CREATE DATABASE hr_assistant_test;"
+
+# Запуск миграций
+docker-compose exec backend java -jar app.jar --spring.profiles.active=test
+```
+
+#### 2. Настройка тестовых данных
+```bash
+# Копирование тестовых данных
+cp env.example .env.test
+# Отредактируйте .env.test для тестовой среды
+```
+
+### Запуск тестов
+
+#### Backend тесты
+```bash
 cd backend
+
+# Unit тесты
 mvn test
 
-# Frontend тесты
+# Интеграционные тесты
+mvn test -Dtest=*IntegrationTest
+
+# Тесты с покрытием
+mvn test jacoco:report
+```
+
+#### Frontend тесты
+```bash
 cd frontend
+
+# Unit тесты
 npm test
 
-# Интеграционные тесты
-docker-compose -f docker-compose.test.yml up --abort-on-container-exit
+# E2E тесты
+npm run test:e2e
+
+# Тесты с покрытием
+npm run test:coverage
+```
+
+#### Интеграционные тесты
+```bash
+# Запуск тестовой среды
+docker-compose -f docker-compose.test.yml up -d
+
+# Запуск тестов
+docker-compose -f docker-compose.test.yml exec backend mvn test
+
+# Остановка тестовой среды
+docker-compose -f docker-compose.test.yml down
 ```
 
 ### Тестовые данные
+
+#### Создание тестовых пользователей
 ```bash
-# Создание тестового пользователя
-curl -X POST http://localhost:8080/api/v1/auth/register \
+# Администратор
+curl -X POST http://localhost:8080/api/v1/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"admin@example.com","password":"admin123","role":"ADMIN"}'
+  -d '{"email":"admin@hr-assistant.com","password":"admin123"}'
+
+# HR менеджер
+curl -X POST http://localhost:8080/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"hr@hr-assistant.com","password":"admin123"}'
+
+# Интервьюер
+curl -X POST http://localhost:8080/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"interviewer1@hr-assistant.com","password":"admin123"}'
 ```
+
+#### Создание тестовых вакансий
+```bash
+# Создание вакансии Java Developer
+curl -X POST http://localhost:8080/api/v1/vacancies \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -d '{
+    "title": "Senior Java Developer",
+    "description": "We are looking for an experienced Java developer",
+    "requirements": "5+ years of Java experience, Spring Framework, REST APIs",
+    "salaryMin": 80000,
+    "salaryMax": 120000,
+    "location": "Remote",
+    "employmentType": "FULL_TIME",
+    "experienceLevel": "SENIOR"
+  }'
+```
+
+#### Создание тестового интервью
+```bash
+# Создание интервью
+curl -X POST http://localhost:8080/api/v1/interviews \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -d '{
+    "candidateName": "Иван Иванов",
+    "candidateEmail": "ivan@example.com",
+    "candidatePhone": "+7-999-123-45-67",
+    "vacancyId": 1
+  }'
+```
+
+### Тестирование ML моделей
+
+#### Тестирование транскрипции
+```bash
+# Загрузка тестового аудио
+curl -X POST http://localhost:8080/api/v1/interviews/1/questions/1/upload-chunk \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -F "file=@test-audio.wav" \
+  -F "chunkIndex=0" \
+  -F "isFinal=true"
+```
+
+#### Тестирование антифрода
+```bash
+# Отправка heartbeat
+curl -X POST http://localhost:8080/api/v1/interviews/1/heartbeat \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -d '{
+    "timestamp": 1640995200000,
+    "browserInfo": "Chrome 96.0.4664.110",
+    "screenResolution": "1920x1080",
+    "timezone": "Europe/Moscow"
+  }'
+```
+
+### Тестирование производительности
+
+#### Нагрузочное тестирование
+```bash
+# Установка Apache Bench
+sudo apt-get install apache2-utils
+
+# Тест создания интервью
+ab -n 100 -c 10 -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -p test-interview.json \
+  http://localhost:8080/api/v1/interviews
+
+# Тест получения результатов
+ab -n 1000 -c 50 -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  http://localhost:8080/api/v1/interviews/1/results
+```
+
+#### Тестирование ML производительности
+```bash
+# Тест транскрипции
+time curl -X POST http://localhost:8080/api/v1/interviews/1/questions/1/upload-chunk \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -F "file=@test-audio.wav" \
+  -F "isFinal=true"
+```
+
+### Автоматизированное тестирование
+
+#### CI/CD Pipeline
+```yaml
+# .github/workflows/test.yml
+name: Tests
+on: [push, pull_request]
+jobs:
+  backend-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'
+      - name: Run tests
+        run: cd backend && mvn test
+      
+  frontend-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+      - name: Run tests
+        run: cd frontend && npm test
+```
+
+### Тестовые сценарии
+
+#### 1. Полный цикл интервью
+1. Создание интервью
+2. Запуск интервью
+3. Загрузка аудио/видео ответов
+4. Получение результатов анализа
+5. Проверка антифрод данных
+
+#### 2. Тестирование безопасности
+1. Попытка доступа без авторизации
+2. Попытка доступа с неверным токеном
+3. Тестирование RBAC
+4. Тестирование CORS
+
+#### 3. Тестирование отказоустойчивости
+1. Отключение Redis
+2. Отключение PostgreSQL
+3. Отключение MinIO
+4. Перегрузка системы
+
+### Отчеты о тестировании
+
+#### Покрытие кода
+```bash
+# Backend покрытие
+cd backend
+mvn jacoco:report
+open target/site/jacoco/index.html
+
+# Frontend покрытие
+cd frontend
+npm run test:coverage
+open coverage/lcov-report/index.html
+```
+
+#### Метрики качества
+- **Покрытие кода**: >80%
+- **Время выполнения тестов**: <5 минут
+- **Успешность тестов**: 100%
+- **Производительность**: <2 сек на запрос
 
 ## 🚀 Развертывание в продакшн
 
