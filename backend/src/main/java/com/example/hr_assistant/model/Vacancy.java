@@ -1,10 +1,10 @@
 package com.example.hr_assistant.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Data
 @Entity
@@ -15,4 +15,10 @@ public class Vacancy {
 
     private String title;
     private String description;
+
+    @ElementCollection
+    @CollectionTable(name = "vacancy_competency_weights", joinColumns = @JoinColumn(name = "vacancy_id"))
+    @MapKeyColumn(name = "competency_name")
+    @Column(name = "weight")
+    private Map<String, Double> requiredCompetencies = new HashMap<>();
 }

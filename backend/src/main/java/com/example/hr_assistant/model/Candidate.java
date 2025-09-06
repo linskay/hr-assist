@@ -1,10 +1,10 @@
 package com.example.hr_assistant.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -16,4 +16,14 @@ public class Candidate {
     private String name;
     private String email;
     private String phone;
+
+    @Lob
+    private String resumeText;
+
+    private int extractedExperienceYears;
+
+    @ElementCollection
+    @CollectionTable(name = "candidate_skills", joinColumns = @JoinColumn(name = "candidate_id"))
+    @Column(name = "skill")
+    private List<String> extractedSkills = new ArrayList<>();
 }
