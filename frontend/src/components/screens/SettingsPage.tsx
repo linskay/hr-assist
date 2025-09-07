@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Paintbrush, Languages, UserCircle } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from '@/components/ui/card';
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 const SettingsPage: React.FC = () => {
   return (
@@ -39,13 +41,17 @@ const SettingsPage: React.FC = () => {
           <Card>
             <CardContent className="p-6 space-y-4">
                <h3 className="text-2xl font-bold">Тема</h3>
-               <p className="text-white/70">Выберите предпочитаемую визуальную тему.</p>
-               <div className="flex gap-2">
-                 <Button variant="default">Киберпанк</Button>
-                 <Button variant="outline" disabled>Светлая</Button>
-                 <Button variant="outline" disabled>Темная</Button>
+               <p className="text-white/70">Настройте визуальное оформление приложения.</p>
+               <div className="space-y-4 pt-4">
+                <div className="flex items-center space-x-2">
+                  <Switch id="cyberpunk-mode" defaultChecked />
+                  <Label htmlFor="cyberpunk-mode">Тема "Киберпанк"</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Switch id="dark-mode" disabled />
+                  <Label htmlFor="dark-mode" className="text-white/50">Темная тема (в разработке)</Label>
+                </div>
                </div>
-               <p className="text-xs text-white/40 mt-4">Скоро появятся новые темы!</p>
             </CardContent>
           </Card>
         </TabsContent>
@@ -59,7 +65,6 @@ const SettingsPage: React.FC = () => {
                 <Button variant="outline">English</Button>
                 <Button variant="default">Русский</Button>
               </div>
-              <p className="text-xs text-white/40 mt-4">Выбор языка в разработке.</p>
             </CardContent>
           </Card>
         </TabsContent>
