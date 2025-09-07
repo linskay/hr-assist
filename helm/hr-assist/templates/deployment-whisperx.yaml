@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "hr-assist.fullname" . }}-whisperx
+spec:
+  replicas: {{ .Values.replicaCount.whisperx }}
+  selector:
+    matchLabels:
+      app: {{ include "hr-assist.fullname" . }}-whisperx
+  template:
+    metadata:
+      labels:
+        app: {{ include "hr-assist.fullname" . }}-whisperx
+    spec:
+      containers:
+        - name: whisperx
+          image: {{ .Values.image.whisperx }}
+          ports:
+            - containerPort: {{ .Values.service.whisperx.port }}
+          env:
+            - name: TRANSFORMERS_CACHE
+              value: /root/.cache/huggingface
+            - name: HF_HOME
+              value: /root/.cache/huggingface
+            - name: TORCH_HOME
+              value: /root/.cache/torch
+          volumeMounts:
+            - name: model-cache
+              mountPath: /root/.cache
+      volumes:
+        - name: model-cache
+          emptyDir: {}
+

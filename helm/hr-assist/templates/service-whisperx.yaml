@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "hr-assist.fullname" . }}-whisperx
+spec:
+  selector:
+    app: {{ include "hr-assist.fullname" . }}-whisperx
+  ports:
+    - port: {{ .Values.service.whisperx.port }}
+      targetPort: {{ .Values.service.whisperx.port }}
+      protocol: TCP
+

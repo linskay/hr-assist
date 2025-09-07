@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="009-create-users-indexes" author="hr-assistant">
+        <createIndex tableName="users" indexName="idx_users_email">
+            <column name="email"/>
+        </createIndex>
+        <createIndex tableName="users" indexName="idx_users_username">
+            <column name="username"/>
+        </createIndex>
+        <createIndex tableName="users" indexName="idx_users_role">
+            <column name="role"/>
+        </createIndex>
+        <createIndex tableName="users" indexName="idx_users_active">
+            <column name="is_active"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="010-create-vacancies-indexes" author="hr-assistant">
+        <createIndex tableName="vacancies" indexName="idx_vacancies_status">
+            <column name="status"/>
+        </createIndex>
+        <createIndex tableName="vacancies" indexName="idx_vacancies_created_by">
+            <column name="created_by"/>
+        </createIndex>
+        <createIndex tableName="vacancies" indexName="idx_vacancies_employment_type">
+            <column name="employment_type"/>
+        </createIndex>
+        <createIndex tableName="vacancies" indexName="idx_vacancies_experience_level">
+            <column name="experience_level"/>
+        </createIndex>
+        <createIndex tableName="vacancies" indexName="idx_vacancies_created_at">
+            <column name="created_at"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="011-create-candidates-indexes" author="hr-assistant">
+        <createIndex tableName="candidates" indexName="idx_candidates_email">
+            <column name="email"/>
+        </createIndex>
+        <createIndex tableName="candidates" indexName="idx_candidates_status">
+            <column name="status"/>
+        </createIndex>
+        <createIndex tableName="candidates" indexName="idx_candidates_created_at">
+            <column name="created_at"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="012-create-interviews-indexes" author="hr-assistant">
+        <createIndex tableName="interviews" indexName="idx_interviews_candidate_id">
+            <column name="candidate_id"/>
+        </createIndex>
+        <createIndex tableName="interviews" indexName="idx_interviews_vacancy_id">
+            <column name="vacancy_id"/>
+        </createIndex>
+        <createIndex tableName="interviews" indexName="idx_interviews_interviewer_id">
+            <column name="interviewer_id"/>
+        </createIndex>
+        <createIndex tableName="interviews" indexName="idx_interviews_status">
+            <column name="status"/>
+        </createIndex>
+        <createIndex tableName="interviews" indexName="idx_interviews_scheduled_at">
+            <column name="scheduled_at"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="013-create-interview-sessions-indexes" author="hr-assistant">
+        <createIndex tableName="interview_sessions" indexName="idx_interview_sessions_interview_id">
+            <column name="interview_id"/>
+        </createIndex>
+        <createIndex tableName="interview_sessions" indexName="idx_interview_sessions_token">
+            <column name="session_token"/>
+        </createIndex>
+        <createIndex tableName="interview_sessions" indexName="idx_interview_sessions_status">
+            <column name="status"/>
+        </createIndex>
+        <createIndex tableName="interview_sessions" indexName="idx_interview_sessions_started_at">
+            <column name="started_at"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="014-create-interview-responses-indexes" author="hr-assistant">
+        <createIndex tableName="interview_responses" indexName="idx_interview_responses_session_id">
+            <column name="session_id"/>
+        </createIndex>
+        <createIndex tableName="interview_responses" indexName="idx_interview_responses_created_at">
+            <column name="created_at"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="015-create-antifraud-checks-indexes" author="hr-assistant">
+        <createIndex tableName="antifraud_checks" indexName="idx_antifraud_checks_session_id">
+            <column name="session_id"/>
+        </createIndex>
+        <createIndex tableName="antifraud_checks" indexName="idx_antifraud_checks_type">
+            <column name="check_type"/>
+        </createIndex>
+        <createIndex tableName="antifraud_checks" indexName="idx_antifraud_checks_result">
+            <column name="result"/>
+        </createIndex>
+        <createIndex tableName="antifraud_checks" indexName="idx_antifraud_checks_created_at">
+            <column name="created_at"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="016-create-interview-analysis-indexes" author="hr-assistant">
+        <createIndex tableName="interview_analysis" indexName="idx_interview_analysis_session_id">
+            <column name="session_id"/>
+        </createIndex>
+        <createIndex tableName="interview_analysis" indexName="idx_interview_analysis_recommendation">
+            <column name="recommendation"/>
+        </createIndex>
+        <createIndex tableName="interview_analysis" indexName="idx_interview_analysis_created_at">
+            <column name="created_at"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

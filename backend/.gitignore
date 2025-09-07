@@ -1,0 +1,18 @@
+# Maven
+target/
+*.jar
+*.war
+*.ear
+
+# Log files
+*.log
+
+# IDE
+.idea/
+*.iml
+*.iws
+
+# Eclipse
+.classpath
+.project
+.settings/

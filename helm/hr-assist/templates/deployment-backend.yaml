@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "hr-assist.fullname" . }}-backend
+spec:
+  replicas: {{ .Values.replicaCount.backend }}
+  selector:
+    matchLabels:
+      app: {{ include "hr-assist.fullname" . }}-backend
+  template:
+    metadata:
+      labels:
+        app: {{ include "hr-assist.fullname" . }}-backend
+    spec:
+      containers:
+        - name: backend
+          image: {{ .Values.image.backend }}
+          ports:
+            - containerPort: {{ .Values.service.backend.port }}
+          env:
+            - name: WHISPERX_URL
+              value: {{ .Values.env.backend.WHISPERX_URL | quote }}
+

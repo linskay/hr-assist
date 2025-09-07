@@ -1,0 +1,25 @@
+image:
+  backend: backend:latest
+  frontend: frontend:latest
+  whisperx: hr-assist-whisperx:latest
+
+replicaCount:
+  backend: 1
+  frontend: 1
+  whisperx: 1
+
+service:
+  backend:
+    port: 8080
+  frontend:
+    port: 3000
+  whisperx:
+    port: 9000
+
+env:
+  backend:
+    WHISPERX_URL: http://whisperx:9000
+  frontend:
+    VITE_API_URL: http://backend:8080/api/v1
+    VITE_WHISPERX_URL: http://whisperx:9000
+

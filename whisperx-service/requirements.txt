@@ -1,0 +1,12 @@
+# Core service
+fastapi==0.111.0
+uvicorn[standard]==0.30.6
+python-multipart==0.0.9
+
+# WhisperX
+# Note: install PyTorch separately per your CUDA/CPU. See docs in docs/WHISPERX.md
+whisperx==3.4.2
+
+# Optional utilities
+ffmpeg-python==0.2.0
+

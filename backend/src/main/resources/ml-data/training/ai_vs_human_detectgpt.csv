@@ -1,0 +1,8 @@
+answer_text,label,role,grade
+"Я 5 лет занимаюсь backend‑разработкой на Java, активно использую Spring Boot и Kafka.",human,Backend Developer,Senior
+"Систематически проектирую REST API, провожу code review и пишу интеграционные тесты.",human,Backend Developer,Middle
+"I possess extensive experience in scalable microservices and cloud-native architectures using Spring.",ai,Backend Developer,Senior
+"The candidate demonstrates robust proficiency in Java with strong exposure to Kafka and Docker.",ai,Backend Developer,Middle
+"Работал с CI/CD (GitLab CI), Docker, K8s, внедрял мониторинг Prometheus/Grafana.",human,DevOps,Middle
+"My background includes optimizing performance and ensuring reliability across distributed systems.",ai,SRE,Senior
+

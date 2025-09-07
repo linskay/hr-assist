@@ -1,0 +1,7 @@
+apiVersion: v2
+name: hr-assist
+description: HR Assistant (backend, frontend, whisperx)
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+
