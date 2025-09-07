@@ -15,6 +15,14 @@ import {
 } from "@/components/ui/modal";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 // Mock data for candidates
 const mockCandidates = [
@@ -87,32 +95,33 @@ const Dashboard: React.FC = () => {
         </CardContent>
       </Card>
 
-      {/* Candidate List */}
-      <div className="space-y-4">
-        {mockCandidates.map((candidate, index) => (
-          <motion.div
-            key={candidate.id}
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
-          >
-            <Card className="hover:border-brand-accent transition-colors" glow="accent">
-              <CardContent className="grid grid-cols-2 md:grid-cols-4 items-center gap-4 p-4">
-                <div className="font-semibold text-lg">{candidate.name}</div>
-                <div className="text-white/70">{candidate.role}</div>
-                <div>
+      {/* Candidate Table */}
+      <Card>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Имя</TableHead>
+              <TableHead>Должность</TableHead>
+              <TableHead>Статус</TableHead>
+              <TableHead className="text-right">Оценка</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {mockCandidates.map((candidate) => (
+              <TableRow key={candidate.id}>
+                <TableCell className="font-medium">{candidate.name}</TableCell>
+                <TableCell>{candidate.role}</TableCell>
+                <TableCell>
                   <Badge variant={getStatusVariant(candidate.status)}>{candidate.status}</Badge>
-                </div>
-                <div className="text-right">
-                  <span className="text-xl font-bold text-brand-highlight-aqua">
-                    {candidate.score !== null ? `${candidate.score}%` : 'N/A'}
-                  </span>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        ))}
-      </div>
+                </TableCell>
+                <TableCell className="text-right font-bold text-brand-highlight-aqua">
+                  {candidate.score !== null ? `${candidate.score}%` : 'N/A'}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </Card>
     </motion.div>
   );
 };
