@@ -47,8 +47,8 @@ const LoginPage: React.FC = () => {
         transition={{ duration: 0.5, ease: 'easeOut' }}
       >
         <Card className="w-full max-w-md" glow="accent">
-          <CardContent>
-            <div className="text-center py-8">
+          <CardContent className="p-8">
+            <div className="text-center mb-8">
               <h2 className="text-4xl font-bold text-white">
                 Авторизация
               </h2>

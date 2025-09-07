@@ -53,7 +53,7 @@ export const Header: React.FC = () => {
                   <AvatarImage src={`https://i.pravatar.cc/150?u=${user.email}`} alt={user.email} />
                   <AvatarFallback>{user.email.substring(0, 2).toUpperCase()}</AvatarFallback>
                 </Avatar>
-                <Button asChild variant="ghost" size="icon">
+                <Button asChild variant="neon-icon" size="icon">
                   <Link to="/app/settings">
                     <Settings className="h-5 w-5" />
                   </Link>

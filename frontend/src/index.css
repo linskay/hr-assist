@@ -19,16 +19,7 @@
     @apply bg-white/5 backdrop-blur-md border border-white/10 rounded-lg;
   }
 
-  /* Neon button base style */
-  .btn-neon {
-    @apply relative inline-flex items-center justify-center px-6 py-3 overflow-hidden font-medium text-white transition-all duration-300 ease-out border-2 border-brand-accent rounded-lg group;
-  }
-
-  .btn-neon:hover {
-    @apply shadow-neon-glow-accent;
-  }
-
-  /* New utility for the animated border button */
+  /* Utility for the animated border button */
   .border-image-gradient {
     border-image-slice: 1;
     border-image-source: linear-gradient(90deg, #7f00ff, #00eaff);

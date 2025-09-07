@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Loader } from '@/components/ui/loader';
-import { Check, Mic, MicOff, MoveRight, Square, Video, VideoOff, Wifi, WifiOff, X, Maximize, Minimize } from 'lucide-react';
+import { Mic, MoveRight, Square, Video, VideoOff, Wifi, WifiOff, X, Maximize, Minimize } from 'lucide-react';
 import Typewriter from '@/components/ui/typewriter';
 
 // A placeholder for the audio visualizer

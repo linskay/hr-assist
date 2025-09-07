@@ -10,20 +10,10 @@ export default {
         sans: ['Poppins', 'sans-serif'],
       },
       colors: {
-        // New color palette from the spec
         'brand-bg': '#0d0b33',
         'brand-accent': '#7f00ff',
         'brand-highlight-aqua': '#00eaff',
         'brand-highlight-pink': '#ff00ff',
-
-        // Keeping old neon colors for now, might be useful
-        neon: {
-          blue: '#00BFFF',
-          purple: '#8A2BE2',
-          cyan: '#00FFFF',
-          pink: '#FF1493',
-          green: '#00FF00',
-        },
       },
       animation: {
         'gradient-bg': 'gradient-bg 15s ease infinite',

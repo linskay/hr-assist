@@ -30,10 +30,9 @@ function AppRoutes() {
               <Layout>
                 <Routes>
                   <Route path="dashboard" element={<Dashboard />} />
-                  <Route path="interviews" element={<InterviewScreen />} />
-                  <Route path="reports" element={<ReportScreen />} />
+                  <Route path="interviews/:id" element={<InterviewScreen />} />
+                  <Route path="reports/:id" element={<ReportScreen />} />
                   <Route path="settings" element={<SettingsPage />} />
-                  {/* Redirect any other /app path to the dashboard */}
                   <Route path="*" element={<Navigate to="/app/dashboard" replace />} />
                 </Routes>
               </Layout>
@@ -41,7 +40,6 @@ function AppRoutes() {
           }
         />
 
-        {/* Fallback for any other top-level route */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </AnimatePresence>
@@ -60,7 +58,7 @@ function App() {
             className: 'glass-card text-white',
             duration: 4000,
             style: {
-              background: 'rgba(13, 11, 51, 0.5)', // brand-bg with transparency
+              background: 'rgba(13, 11, 51, 0.5)',
             },
             success: {
               className: 'glass-card text-brand-highlight-aqua',
