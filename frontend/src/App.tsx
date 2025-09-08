@@ -1,83 +1,83 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+import { AnimatePresence } from 'framer-motion';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { Layout } from './components/layout/Layout';
 import Dashboard from './components/screens/Dashboard';
 import InterviewScreen from './components/screens/InterviewScreen';
 import ReportScreen from './components/screens/ReportScreen';
-import Landing from './components/screens/Landing';
-import { AnimatePresence, motion } from 'framer-motion';
-import { LoginForm } from './components/auth/LoginForm';
-import NotFound from './components/screens/NotFound';
-import CookieConsent from './components/ui/CookieConsent';
-import CookiesPolicy from './components/screens/CookiesPolicy';
+import LandingPage from './components/screens/LandingPage';
+import LoginPage from './components/auth/LoginPage';
+import SettingsPage from './components/screens/SettingsPage';
+import NotFoundPage from './components/screens/NotFoundPage';
+import CookieConsent from './components/layout/CookieConsent';
+
+function AppRoutes() {
+  const location = useLocation();
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        {/* Public Routes */}
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<LoginPage />} />
+
+        {/* Protected Routes */}
+        <Route
+          path="/app/*"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <Routes>
+                  <Route path="dashboard" element={<Dashboard />} />
+                  <Route path="interviews/:id" element={<InterviewScreen />} />
+                  <Route path="reports/:id" element={<ReportScreen />} />
+                  <Route path="settings" element={<SettingsPage />} />
+                  <Route path="*" element={<Navigate to="/app/dashboard" replace />} />
+                </Routes>
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </AnimatePresence>
+  );
+}
 
 function App() {
   return (
     <Router>
-      <div className="gradient-bg particles min-h-screen">
-        <AnimatePresence mode="wait">
-          <Routes>
-            <Route path="/landing" element={
-              <motion.div initial={{opacity:0, y:8}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-8}}>
-                <Landing />
-              </motion.div>
-            } />
-            <Route path="/login" element={<LoginForm />} />
-            <Route path="/cookies" element={<CookiesPolicy />} />
-            <Route
-              path="/*"
-              element={
-                <ProtectedRoute>
-                  <Layout>
-                    <Routes>
-                      <Route path="/" element={<Dashboard />} />
-                      <Route path="/interviews" element={<InterviewScreen />} />
-                      <Route path="/reports" element={<ReportScreen />} />
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
-                  </Layout>
-                </ProtectedRoute>
-              }
-            />
-          </Routes>
-        </AnimatePresence>
+      <div className="min-h-screen">
+        <AppRoutes />
         <CookieConsent />
         <Toaster
           position="top-right"
           toastOptions={{
+            className: 'glass-card text-white',
             duration: 4000,
             style: {
-              background: 'rgba(0, 0, 0, 0.8)',
-              color: '#fff',
-              border: '1px solid #00BFFF',
-              borderRadius: '8px',
-              backdropFilter: 'blur(10px)',
+              background: 'rgba(13, 11, 51, 0.5)',
             },
             success: {
-              duration: 3000,
+              className: 'glass-card text-brand-highlight-aqua',
               style: {
-                background: 'rgba(0, 0, 0, 0.8)',
-                color: '#00FF00',
-                border: '1px solid #00FF00',
-                boxShadow: '0 0 10px #00FF00',
+                borderColor: '#00eaff',
               },
               iconTheme: {
-                primary: '#00FF00',
-                secondary: '#000',
+                primary: '#00eaff',
+                secondary: '#0d0b33',
               },
             },
             error: {
-              duration: 5000,
-              style: {
-                background: 'rgba(0, 0, 0, 0.8)',
-                color: '#ff6b6b',
-                border: '1px solid #ff6b6b',
-                boxShadow: '0 0 10px #ff6b6b',
+              className: 'glass-card text-brand-highlight-pink',
+               style: {
+                borderColor: '#ff00ff',
               },
               iconTheme: {
-                primary: '#ff6b6b',
-                secondary: '#000',
+                primary: '#ff00ff',
+                secondary: '#0d0b33',
               },
             },
           }}
