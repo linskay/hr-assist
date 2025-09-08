@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Cookie } from 'lucide-react';
 
@@ -33,25 +32,21 @@ const CookieConsent: React.FC = () => {
           transition={{ type: 'spring', stiffness: 100, damping: 20 }}
           className="fixed bottom-4 right-4 z-50 w-full max-w-sm"
         >
-          <Card glow="aqua">
-            <CardContent className="p-6">
-              <div className="flex items-start gap-4">
-                <Cookie className="h-8 w-8 text-brand-highlight-aqua mt-1 flex-shrink-0" />
-                <div>
-                  <h3 className="text-xl font-bold mb-2">Печеньки</h3>
-                  <p className="text-sm text-white/70">
-                    Пользуясь нашим сайтом, вы соглашаетесь с тем, что мы используем{' '}
-                    <a href="/cookie-policy" target="_blank" rel="noopener noreferrer" className="underline hover:text-brand-highlight-aqua">
-                      cookies 🍪
-                    </a>
-                  </p>
-                  <Button onClick={handleAccept} className="mt-4 w-full" variant="secondary">
-                    Окей
-                  </Button>
-                </div>
+          <div className="glass card-neon border border-neon-purple/40 neon-glow p-4 rounded-xl bg-black/40 backdrop-blur-md">
+            <div className="flex items-start gap-3">
+              <Cookie className="h-6 w-6 text-brand-highlight-aqua mt-0.5 flex-shrink-0" />
+              <div>
+                <h3 className="text-base sm:text-lg font-bold glow-white mb-1">Печеньки</h3>
+                <p className="text-[12px] sm:text-sm text-white/80">
+                  Пользуясь нашим сайтом, вы соглашаетесь с тем, что мы используем cookies 🍪
+                  <a href="/cookies" className="ml-1 underline text-neon-cyan">с тыкательной ссылкой на куки</a>.
+                </p>
+                <Button onClick={handleAccept} className="mt-3 w-full sm:w-auto sm:px-4 sm:py-1.5" variant="secondary">
+                  Окей
+                </Button>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </motion.div>
       )}
     </AnimatePresence>

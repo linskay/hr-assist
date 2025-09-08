@@ -7,10 +7,9 @@ import { Layout } from './components/layout/Layout';
 import Dashboard from './components/screens/Dashboard';
 import InterviewScreen from './components/screens/InterviewScreen';
 import ReportScreen from './components/screens/ReportScreen';
-import LandingPage from './components/screens/LandingPage';
 import LoginPage from './components/auth/LoginPage';
 import SettingsPage from './components/screens/SettingsPage';
-import NotFoundPage from './components/screens/NotFoundPage';
+import NotFound from './components/screens/NotFound';
 import CookieConsent from './components/layout/CookieConsent';
 
 function AppRoutes() {
@@ -19,7 +18,7 @@ function AppRoutes() {
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         {/* Public Routes */}
-        <Route path="/" element={<LandingPage />} />
+        <Route path="/" element={<Navigate to="/app/dashboard" replace />} />
         <Route path="/login" element={<LoginPage />} />
 
         {/* Protected Routes */}
@@ -40,7 +39,7 @@ function AppRoutes() {
           }
         />
 
-        <Route path="*" element={<NotFoundPage />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </AnimatePresence>
   );
@@ -49,7 +48,7 @@ function AppRoutes() {
 function App() {
   return (
     <Router>
-      <div className="min-h-screen">
+      <div className="min-h-screen gradient-bg particles">
         <AppRoutes />
         <CookieConsent />
         <Toaster
