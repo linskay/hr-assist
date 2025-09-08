@@ -93,21 +93,47 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     container_name: hr-assistant-backend
+    command: ["java", "-Dserver.ssl.enabled=false", "-Dspring.profiles.active=prod", "-Dspring.jpa.hibernate.ddl-auto=validate", "-jar", "app.jar"]
     environment:
-      SPRING_PROFILES_ACTIVE: dev
+      SPRING_PROFILES_ACTIVE: prod
+      JAVA_TOOL_OPTIONS: -Dspring.profiles.active=prod -Dserver.ssl.enabled=false
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/hr_assistant
       SPRING_DATASOURCE_USERNAME: hr_user
       SPRING_DATASOURCE_PASSWORD: hr_password
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+      SPRING_LIQUIBASE_ENABLED: "true"
+      SPRING_LIQUIBASE_CHANGE_LOG: classpath:db/changelog/db.changelog-master.xml
+      SPRING_LIQUIBASE_DROP_FIRST: "false"
+      SPRING_JPA_DEFER_DATASOURCE_INITIALIZATION: "false"
+      SPRING_SQL_INIT_MODE: never
+      SERVER_SSL_ENABLED: "false"
+      SERVER_SSL_KEY_STORE: ""
+      SERVER_SSL_KEY_STORE_PASSWORD: ""
       SPRING_DATA_REDIS_HOST: redis
       SPRING_RABBITMQ_HOST: rabbitmq
       MINIO_ENDPOINT: http://minio:9000
       MINIO_ACCESS_KEY: minioadmin
       MINIO_SECRET_KEY: minioadmin
+      JWT_SECRET: dev-secret-key-1234567890
       SBERT_URL: http://sbert-embed:8080
+      RUBERT_URL: http://rubert:8093
+      TTS_URL: http://tts:8100
+      AVATAR_URL: http://avatar:8200
+      ML_INIT_ENABLED: "true"
+      ML_MODELS_PATH: /models
+      # Explicit model filenames (located in repo root or models/* via fallback)
+      ML_WHISPER_MODEL: ""            # используем whisperx-service
+      ML_EMBEDDINGS_MODEL: ""         # используем sbert-embed-service
+      ML_CLASSIFIER_MODEL: rubert-classifier.onnx
+      ML_VOICE_VERIFICATION_MODEL: ecapa-tdnn.onnx
+      ML_FACE_RECOGNITION_MODEL: facenet.onnx
+      ML_LIVENESS_MODEL: liveness-detector.onnx
+      ML_AI_DETECTOR_MODEL: ai-text-detector.onnx
     ports:
       - "8081:8080"
     volumes:
-      - ./models:/opt/models:ro
+      - ./:/models:ro
       - backend_logs:/app/logs
     depends_on:
       - postgres
@@ -246,7 +272,6 @@ services:
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
     container_name: hr-assistant-frontend
     ports:
       - "3000:80"
