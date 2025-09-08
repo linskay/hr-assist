@@ -1,0 +1,124 @@
+
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Model Versions -->
+    <changeSet id="017-create-model-versions" author="hr-assistant">
+        <createTable tableName="model_versions">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="model_name" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="model_path" type="VARCHAR(500)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="metadata_json" type="TEXT"/>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="false"/>
+            <column name="loaded_at" type="TIMESTAMP"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- Competency -->
+    <changeSet id="018-create-competency" author="hr-assistant">
+        <createTable tableName="competency">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(200)"/>
+            <column name="description" type="TEXT"/>
+        </createTable>
+    </changeSet>
+
+    <!-- Candidate skills collection -->
+    <changeSet id="019-create-candidate-skills" author="hr-assistant">
+        <createTable tableName="candidate_skills">
+            <column name="candidate_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="skill" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint
+                baseTableName="candidate_skills"
+                baseColumnNames="candidate_id"
+                constraintName="fk_candidate_skills_candidate"
+                referencedTableName="candidates"
+                referencedColumnNames="id"/>
+    </changeSet>
+
+    <!-- InterviewReport and its collections -->
+    <changeSet id="020-create-interview-report" author="hr-assistant">
+        <createTable tableName="interview_report">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="candidate_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="vacancy_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="interview_date" type="TIMESTAMP"/>
+            <column name="match_percentage" type="DECIMAL(5,2)"/>
+            <column name="recommendation" type="VARCHAR(50)"/>
+            <column name="recommendation_reason" type="TEXT"/>
+            <column name="full_transcript" type="TEXT"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="interview_report" baseColumnNames="candidate_id" constraintName="fk_report_candidate" referencedTableName="candidates" referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="interview_report" baseColumnNames="vacancy_id" constraintName="fk_report_vacancy" referencedTableName="vacancies" referencedColumnNames="id"/>
+
+        <createTable tableName="report_competency_scores">
+            <column name="report_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="competency_name" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="score" type="DECIMAL(4,3)"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="report_competency_scores" baseColumnNames="report_id" constraintName="fk_report_scores_report" referencedTableName="interview_report" referencedColumnNames="id"/>
+
+        <createTable tableName="report_strengths">
+            <column name="report_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="strength" type="TEXT"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="report_strengths" baseColumnNames="report_id" constraintName="fk_report_strengths_report" referencedTableName="interview_report" referencedColumnNames="id"/>
+
+        <createTable tableName="report_weaknesses">
+            <column name="report_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="weakness" type="TEXT"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="report_weaknesses" baseColumnNames="report_id" constraintName="fk_report_weaknesses_report" referencedTableName="interview_report" referencedColumnNames="id"/>
+    </changeSet>
+
+    <!-- Simple test table -->
+    <changeSet id="021-create-test-table" author="hr-assistant">
+        <createTable tableName="test_table">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="note" type="VARCHAR(255)"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>
+
+

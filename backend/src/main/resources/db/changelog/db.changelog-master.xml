@@ -9,5 +9,7 @@
     <include file="db/changelog/changes/001-create-tables.xml" relativeToChangelogFile="true"/>
     <include file="db/changelog/changes/002-create-indexes.xml" relativeToChangelogFile="true"/>
     <include file="db/changelog/changes/003-insert-test-data.xml" relativeToChangelogFile="true"/>
+    <include file="db/changelog/changes/004-create-analysis-antifraud.xml" relativeToChangelogFile="true"/>
+    <include file="db/changelog/changes/005-create-misc-tables.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

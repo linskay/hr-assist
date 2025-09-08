@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAuth } from '../../hooks/useAuth';
+import { Rocket, LogOut, Shield, Crown, Users } from 'lucide-react';
 
 export const Header: React.FC = () => {
   const { user, logout, hasRole } = useAuth();
@@ -30,7 +31,7 @@ export const Header: React.FC = () => {
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
               <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-neon-blue to-neon-purple flex items-center justify-center pulse-glow">
-                <span className="text-2xl">🚀</span>
+                <Rocket size={20} />
               </div>
               <h1 className="text-3xl font-bold text-gradient">
                 HR Assistant AI
@@ -49,9 +50,9 @@ export const Header: React.FC = () => {
                   
                   <div className="flex items-center space-x-2 px-3 py-2 rounded-lg bg-gradient-to-r from-neon-purple from-opacity-20 to-neon-cyan to-opacity-20 border border-neon-purple border-opacity-30">
                     <span className="text-lg">
-                      {user.role === 'ADMIN' && '👑'}
-                      {user.role === 'HR_MANAGER' && '🛡️'}
-                      {user.role === 'INTERVIEWER' && '👥'}
+                      {user.role === 'ADMIN' && <Crown size={16} />}
+                      {user.role === 'HR_MANAGER' && <Shield size={16} />}
+                      {user.role === 'INTERVIEWER' && <Users size={16} />}
                     </span>
                     <span className="text-xs font-semibold text-neon-purple">
                       {getRoleDisplayName(user.role)}
@@ -65,11 +66,8 @@ export const Header: React.FC = () => {
                   )}
                 </div>
                 
-                <button
-                  onClick={handleLogout}
-                  className="btn-neon-purple flex items-center space-x-2"
-                >
-                  <span>🚪</span>
+                <button onClick={handleLogout} className="btn-neon-purple flex items-center space-x-2">
+                  <LogOut size={16} />
                   <span>Выйти</span>
                 </button>
               </>

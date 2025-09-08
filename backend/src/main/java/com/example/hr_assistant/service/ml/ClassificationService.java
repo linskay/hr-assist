@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Value;
+import com.example.hr_assistant.service.external.RubertClient;
 
 /**
  * Сервис для классификации соответствия ответов требованиям
@@ -20,6 +22,10 @@ public class ClassificationService {
     private final ModelManager modelManager;
     private final EmbeddingService embeddingService;
     private final TextTokenizer textTokenizer;
+    private final RubertClient rubertClient;
+
+    @Value("${features.rubert.enabled:false}")
+    private boolean rubertEnabled;
 
     /**
      * Классифицирует соответствие ответа требованиям (0/0.5/1)
@@ -28,6 +34,15 @@ public class ClassificationService {
         Map<String, Double> results = new HashMap<>();
         
         try {
+            if (rubertEnabled) {
+                for (Map.Entry<String, String> requirement : requirements.entrySet()) {
+                    String competency = requirement.getKey();
+                    String requirementText = requirement.getValue();
+                    RubertClient.ScoreResponse r = rubertClient.score(answer, requirementText);
+                    results.put(competency, r != null ? r.getScore() : 0.0);
+                }
+                return results;
+            }
             if (!modelManager.isModelLoaded("classifier")) {
                 log.warn("Модель классификатора не загружена, используем эмбеддинги");
                 return classifyWithEmbeddings(answer, requirements);
