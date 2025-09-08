@@ -1,158 +1,129 @@
 import React from 'react';
+import { motion } from 'framer-motion';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Search, UserPlus, Filter } from 'lucide-react';
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/modal";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
-export default function Dashboard() {
+// Mock data for candidates
+const mockCandidates = [
+  { id: 1, name: 'Иван Иванов', role: 'Frontend-разработчик', status: 'Пройдено', score: 85 },
+  { id: 2, name: 'Мария Кузнецова', role: 'Backend-разработчик', status: 'Ожидание', score: null },
+  { id: 3, name: 'Петр Сидоров', role: 'UI/UX Дизайнер', status: 'Отклонен', score: 45 },
+  { id: 4, name: 'Анна Попова', role: 'Менеджер проекта', status: 'Нанят', score: 92 },
+];
+
+const getStatusVariant = (status: string): "secondary" | "default" | "destructive" | "outline" => {
+  switch (status) {
+    case 'Пройдено': return 'secondary';
+    case 'Нанят': return 'default';
+    case 'Отклонен': return 'destructive';
+    default: return 'outline';
+  }
+};
+
+const Dashboard: React.FC = () => {
   return (
-    <div className="p-6 space-y-8">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="p-4 md:p-8 space-y-8"
+    >
       {/* Header */}
-      <div className="text-center space-y-4">
-        <h1 className="text-6xl font-black text-gradient animate-pulse">
-          🚀 HR Assistant AI
-        </h1>
-        <p className="text-xl opacity-80">
-          Добро пожаловать в будущее рекрутинга с искусственным интеллектом ✨
-        </p>
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+        <div>
+          <h1 className="text-4xl font-bold text-white">Панель кандидатов</h1>
+          <p className="text-white/60 mt-1">Управляйте и просматривайте всех ваших кандидатов.</p>
+        </div>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button>
+              <UserPlus className="mr-2 h-5 w-5" />
+              Добавить кандидата
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Добавить нового кандидата</DialogTitle>
+              <DialogDescription>
+                Заполните информацию ниже, чтобы добавить нового кандидата в систему.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <Input id="name" placeholder="Имя кандидата" />
+              <Input id="role" placeholder="Должность" />
+              <Textarea placeholder="Дополнительные заметки..." />
+            </div>
+            <DialogFooter>
+              <Button type="submit">Сохранить</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="card-neon neon-glow hover:neon-glow-purple transition-all duration-300 group p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium opacity-70">📅 Интервью сегодня</p>
-              <p className="text-4xl font-bold text-neon-blue group-hover:text-neon-purple transition-colors">3</p>
-              <p className="text-xs opacity-60">запланировано</p>
-            </div>
-            <div className="text-4xl">🎯</div>
+      {/* Filters and Search */}
+      <Card glow="aqua">
+        <CardContent className="flex flex-col md:flex-row items-center gap-4 p-4">
+          <div className="relative w-full md:flex-1">
+            <Input placeholder="Поиск по имени или должности..." className="pl-10" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-white/40" />
           </div>
-        </div>
+          <Button variant="outline">
+            <Filter className="mr-2 h-5 w-5" />
+            Фильтры
+          </Button>
+        </CardContent>
+      </Card>
 
-        <div className="card-neon neon-glow-cyan hover:neon-glow transition-all duration-300 group p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium opacity-70">💼 Открытые вакансии</p>
-              <p className="text-4xl font-bold text-neon-cyan group-hover:text-neon-blue transition-colors">5</p>
-              <p className="text-xs opacity-60">активных</p>
-            </div>
-            <div className="text-4xl">📋</div>
-          </div>
-        </div>
-
-        <div className="card-neon neon-glow-purple hover:neon-glow-cyan transition-all duration-300 group p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium opacity-70">👥 Кандидаты</p>
-              <p className="text-4xl font-bold text-neon-purple group-hover:text-neon-cyan transition-colors">12</p>
-              <p className="text-xs opacity-60">в процессе</p>
-            </div>
-            <div className="text-4xl">🌟</div>
-          </div>
-        </div>
-
-        <div className="card-neon neon-glow hover:neon-glow-purple transition-all duration-300 group p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium opacity-70">📊 Конверсия</p>
-              <p className="text-4xl font-bold text-neon-blue group-hover:text-neon-purple transition-colors">78%</p>
-              <p className="text-xs opacity-60">успешных</p>
-            </div>
-            <div className="text-4xl">📈</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Quick Actions */}
-        <div className="lg:col-span-2 space-y-6">
-          <h2 className="text-3xl font-bold">⚡ Быстрые действия</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="card-neon hover:neon-glow transition-all duration-300 group cursor-pointer p-6">
-              <div className="flex items-center space-x-4">
-                <div className="text-4xl">🎤</div>
-                <div>
-                  <h3 className="font-semibold text-lg">Начать интервью</h3>
-                  <p className="text-sm opacity-70">Запустить новое интервью с AI</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="card-neon hover:neon-glow-cyan transition-all duration-300 group cursor-pointer p-6">
-              <div className="flex items-center space-x-4">
-                <div className="text-4xl">📝</div>
-                <div>
-                  <h3 className="font-semibold text-lg">Создать вакансию</h3>
-                  <p className="text-sm opacity-70">Добавить новую позицию</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="card-neon hover:neon-glow-purple transition-all duration-300 group cursor-pointer p-6">
-              <div className="flex items-center space-x-4">
-                <div className="text-4xl">👨‍💼</div>
-                <div>
-                  <h3 className="font-semibold text-lg">Управление кандидатами</h3>
-                  <p className="text-sm opacity-70">Просмотр и редактирование</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="card-neon hover:neon-glow transition-all duration-300 group cursor-pointer p-6">
-              <div className="flex items-center space-x-4">
-                <div className="text-4xl">📊</div>
-                <div>
-                  <h3 className="font-semibold text-lg">Аналитика</h3>
-                  <p className="text-sm opacity-70">Отчеты и метрики</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Chart */}
-        <div className="space-y-6">
-          <h2 className="text-3xl font-bold">📈 Конверсия кандидатов</h2>
-          <div className="card-neon neon-glow-purple p-6">
-            <div className="h-64 flex items-center justify-center">
-              <p className="text-lg opacity-70">График будет здесь</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Recent Activity */}
-      <div className="space-y-6">
-        <h2 className="text-3xl font-bold">🕒 Последняя активность</h2>
-        <div className="card-neon p-6">
-          <div className="space-y-4">
-            <div className="flex items-center space-x-4 p-4 rounded-lg bg-white bg-opacity-5 border border-neon-green">
-              <div className="text-2xl">✅</div>
-              <div className="flex-1">
-                <p className="font-medium">Иван Петров прошел интервью</p>
-                <p className="text-sm opacity-60">2 минуты назад</p>
-              </div>
-              <span className="text-neon-green font-semibold text-lg">85% совпадение</span>
-            </div>
-            
-            <div className="flex items-center space-x-4 p-4 rounded-lg bg-white bg-opacity-5 border border-neon-blue">
-              <div className="text-2xl">📄</div>
-              <div className="flex-1">
-                <p className="font-medium">Создана вакансия "Frontend Developer"</p>
-                <p className="text-sm opacity-60">1 час назад</p>
-              </div>
-              <span className="text-neon-blue font-semibold text-lg">Активна</span>
-            </div>
-            
-            <div className="flex items-center space-x-4 p-4 rounded-lg bg-white bg-opacity-5 border border-neon-purple">
-              <div className="text-2xl">👤</div>
-              <div className="flex-1">
-                <p className="font-medium">Мария Сидорова подала заявку</p>
-                <p className="text-sm opacity-60">3 часа назад</p>
-              </div>
-              <span className="text-neon-purple font-semibold text-lg">Новая</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+      {/* Candidate Table */}
+      <Card>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Имя</TableHead>
+              <TableHead>Должность</TableHead>
+              <TableHead>Статус</TableHead>
+              <TableHead className="text-right">Оценка</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {mockCandidates.map((candidate) => (
+              <TableRow key={candidate.id}>
+                <TableCell className="font-medium">{candidate.name}</TableCell>
+                <TableCell>{candidate.role}</TableCell>
+                <TableCell>
+                  <Badge variant={getStatusVariant(candidate.status)}>{candidate.status}</Badge>
+                </TableCell>
+                <TableCell className="text-right font-bold text-brand-highlight-aqua">
+                  {candidate.score !== null ? `${candidate.score}%` : 'N/A'}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </Card>
+    </motion.div>
   );
-}
+};
+
+export default Dashboard;
