@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { Home, Briefcase, Mic, Users, BarChart2, Cpu, Settings } from 'lucide-react';
 
 interface NavigationItem {
   name: string;
@@ -15,41 +14,45 @@ export const Sidebar: React.FC = () => {
   const location = useLocation();
 
   const navigation: NavigationItem[] = [
-    { name: 'Дашборд', href: '/', icon: <Home size={18} /> },
+    {
+      name: 'Дашборд',
+      href: '/',
+      icon: <span className="text-2xl">🏠</span>,
+    },
     {
       name: 'Вакансии',
       href: '/vacancies',
-      icon: <Briefcase size={18} />,
+      icon: <span className="text-2xl">💼</span>,
       roles: ['ADMIN', 'HR_MANAGER'],
     },
     {
       name: 'Интервью',
       href: '/interviews',
-      icon: <Mic size={18} />,
+      icon: <span className="text-2xl">🎤</span>,
       roles: ['ADMIN', 'HR_MANAGER', 'INTERVIEWER'],
     },
     {
       name: 'Кандидаты',
       href: '/candidates',
-      icon: <Users size={18} />,
+      icon: <span className="text-2xl">👥</span>,
       roles: ['ADMIN', 'HR_MANAGER'],
     },
     {
       name: 'Отчеты',
       href: '/reports',
-      icon: <BarChart2 size={18} />,
+      icon: <span className="text-2xl">📊</span>,
       roles: ['ADMIN', 'HR_MANAGER', 'REVIEWER'],
     },
     {
       name: 'AI Анализ',
       href: '/ai-analysis',
-      icon: <Cpu size={18} />,
+      icon: <span className="text-2xl">🤖</span>,
       roles: ['ADMIN', 'HR_MANAGER'],
     },
     {
       name: 'Администрирование',
       href: '/admin',
-      icon: <Settings size={18} />,
+      icon: <span className="text-2xl">⚙️</span>,
       roles: ['ADMIN'],
     },
   ];

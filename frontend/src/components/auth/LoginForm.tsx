@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { LoginRequest } from '../../types/api';
 import toast from 'react-hot-toast';
-import NeonInput from '../ui/NeonInput';
-import NeonButton from '../ui/NeonButton';
 
 interface LoginFormProps {
   onSuccess?: () => void;
@@ -41,44 +39,70 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
   };
 
   return (
-    <div className="min-h-screen gradient-bg particles px-4 py-6 flex justify-center">
-      <div
-        className="space-y-3 card-neon p-3 border border-neon-purple/30 neon-glow-purple inline-block"
-        style={{ width: 260, marginTop: '12vh' }}
-      >
-        <div className="text-center space-y-1">
-          <h2 className="text-xl sm:text-2xl font-black glow-white">Вход в HR Assistant</h2>
-          <p className="opacity-80 text-[11px] leading-tight">Войдите, чтобы начать интервью и анализ</p>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Вход в HR Assistant
+          </h2>
+          <p className="mt-2 text-center text-sm text-gray-600">
+            Войдите в систему для проведения интервью
+          </p>
         </div>
-        <form className="space-y-2" onSubmit={handleSubmit}>
-          <NeonInput
-            id="email"
-            name="email"
-            type="email"
-            placeholder="Email адрес"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-          <NeonInput
-            id="password"
-            name="password"
-            type="password"
-            placeholder="Пароль"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-          <NeonButton type="submit" fullWidth disabled={isLoading} className="py-2 text-sm">
-            {isLoading ? 'Вход...' : 'Войти'}
-          </NeonButton>
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div className="rounded-md shadow-sm -space-y-px">
+            <div>
+              <label htmlFor="email" className="sr-only">
+                Email
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Email адрес"
+                value={formData.email}
+                onChange={handleChange}
+              />
+            </div>
+            <div>
+              <label htmlFor="password" className="sr-only">
+                Пароль
+              </label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="current-password"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Пароль"
+                value={formData.password}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+
+          <div>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isLoading ? 'Вход...' : 'Войти'}
+            </button>
+          </div>
 
           <div className="text-center">
-            <p className="text-[11px] opacity-70">Тестовые аккаунты:</p>
-            <div className="mt-1 text-[9px] opacity-60 space-y-1 leading-tight">
-              <div>admin@hr-assistant.com / admin123 (DEV)</div>
-              <div>hr@hr-assistant.com / admin123 (DEV)</div>
-              <div>interviewer@hr-assistant.com / admin123 (DEV)</div>
+            <p className="text-sm text-gray-600">
+              Тестовые аккаунты:
+            </p>
+            <div className="mt-2 text-xs text-gray-500 space-y-1">
+              <div>admin@hr-assistant.com / admin123</div>
+              <div>hr@hr-assistant.com / admin123</div>
+              <div>interviewer1@hr-assistant.com / admin123</div>
             </div>
           </div>
         </form>

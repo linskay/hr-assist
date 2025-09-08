@@ -3,7 +3,7 @@
 export interface User {
   id: number;
   email: string;
-  role: 'ADMIN' | 'HR_MANAGER' | 'INTERVIEWER' | 'REVIEWER';
+  role: 'ADMIN' | 'HR' | 'INTERVIEWER' | 'REVIEWER';
 }
 
 export interface LoginRequest {
