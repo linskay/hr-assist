@@ -94,6 +94,7 @@ services:
       dockerfile: Dockerfile
     container_name: hr-assistant-backend
     environment:
+      SPRING_PROFILES_ACTIVE: dev
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/hr_assistant
       SPRING_DATASOURCE_USERNAME: hr_user
       SPRING_DATASOURCE_PASSWORD: hr_password
@@ -153,6 +154,44 @@ services:
       - hr-assistant-network
     restart: unless-stopped
 
+  # TTS Service (Coqui TTS)
+  tts:
+    build:
+      context: ./tts-service
+      dockerfile: Dockerfile
+    container_name: hr-assistant-tts
+    image: hr-assist/tts:latest
+    environment:
+      - TRANSFORMERS_CACHE=/root/.cache/huggingface
+      - HF_HOME=/root/.cache/huggingface
+      - TORCH_HOME=/root/.cache/torch
+      - TTS_MODEL=tts_models/ru/v3_1/fast_pitch
+      - TTS_OUTPUT_DIR=/data/tts
+    volumes:
+      - tts_output:/data/tts
+    ports:
+      - "8100:8100"
+    networks:
+      - hr-assistant-network
+    restart: unless-stopped
+
+  # Avatar Service (Kokoro - talking head)
+  avatar:
+    build:
+      context: ./avatar-service
+      dockerfile: Dockerfile
+    container_name: hr-assistant-avatar
+    image: hr-assist/avatar:latest
+    environment:
+      - AVATAR_OUTPUT_DIR=/data/avatar
+    volumes:
+      - avatar_output:/data/avatar
+    ports:
+      - "8200:8200"
+    networks:
+      - hr-assistant-network
+    restart: unless-stopped
+
   # Video Antifraud Service (DeepFace + MediaPipe)
   video-antifraud:
     build:
@@ -181,6 +220,24 @@ services:
       - HF_HOME=/root/.cache/huggingface
     ports:
       - "8092:8092"
+    networks:
+      - hr-assistant-network
+    restart: unless-stopped
+
+  # ruBERT Similarity/Classification Service
+  rubert:
+    build:
+      context: ./rubert-service
+      dockerfile: Dockerfile
+    container_name: hr-assistant-rubert
+    image: hr-assist/rubert:latest
+    environment:
+      - TRANSFORMERS_CACHE=/root/.cache/huggingface
+      - HF_HOME=/root/.cache/huggingface
+      - TORCH_HOME=/root/.cache/torch
+      - RUBERT_MODEL=DeepPavlov/rubert-base-cased
+    ports:
+      - "8093:8093"
     networks:
       - hr-assistant-network
     restart: unless-stopped
@@ -285,6 +342,8 @@ volumes:
   grafana_data:
   elasticsearch_data:
   whisperx_models:
+  tts_output:
+  avatar_output:
 
 networks:
   hr-assistant-network:

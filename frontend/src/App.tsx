@@ -1,4 +1,3 @@
-import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
@@ -6,29 +5,44 @@ import { Layout } from './components/layout/Layout';
 import Dashboard from './components/screens/Dashboard';
 import InterviewScreen from './components/screens/InterviewScreen';
 import ReportScreen from './components/screens/ReportScreen';
+import Landing from './components/screens/Landing';
+import { AnimatePresence, motion } from 'framer-motion';
+import { LoginForm } from './components/auth/LoginForm';
+import NotFound from './components/screens/NotFound';
+import CookieConsent from './components/ui/CookieConsent';
+import CookiesPolicy from './components/screens/CookiesPolicy';
 
 function App() {
   return (
     <Router>
       <div className="gradient-bg particles min-h-screen">
-        <Routes>
-          <Route path="/login" element={<ProtectedRoute />} />
-          <Route
-            path="/*"
-            element={
-              <ProtectedRoute>
-                <Layout>
-                  <Routes>
-                    <Route path="/" element={<Dashboard />} />
-                    <Route path="/interviews" element={<InterviewScreen />} />
-                    <Route path="/reports" element={<ReportScreen />} />
-                    <Route path="*" element={<Navigate to="/" replace />} />
-                  </Routes>
-                </Layout>
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
+        <AnimatePresence mode="wait">
+          <Routes>
+            <Route path="/landing" element={
+              <motion.div initial={{opacity:0, y:8}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-8}}>
+                <Landing />
+              </motion.div>
+            } />
+            <Route path="/login" element={<LoginForm />} />
+            <Route path="/cookies" element={<CookiesPolicy />} />
+            <Route
+              path="/*"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <Routes>
+                      <Route path="/" element={<Dashboard />} />
+                      <Route path="/interviews" element={<InterviewScreen />} />
+                      <Route path="/reports" element={<ReportScreen />} />
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </AnimatePresence>
+        <CookieConsent />
         <Toaster
           position="top-right"
           toastOptions={{

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800;900&display=swap');
 
 * {
   margin: 0;
@@ -7,8 +7,8 @@
 }
 
 body {
-  font-family: 'Inter', sans-serif;
-  background: linear-gradient(135deg, #0a0a0a 0%, #1a0a2e 25%, #16213e 50%, #0f3460 75%, #0a0a0a 100%);
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #0d0b33 0%, #140a5c 25%, #280a8f 50%, #0d0b33 75%, #0d0b33 100%);
   background-attachment: fixed;
   min-height: 100vh;
   color: white;
@@ -17,7 +17,7 @@ body {
 
 /* Animated gradient background */
 .gradient-bg {
-  background: linear-gradient(-45deg, #0a0a0a, #1a0a2e, #16213e, #0f3460, #0a0a0a);
+  background: linear-gradient(-45deg, #0d0b33, #2a1172, #7f00ff, #00eaff, #0d0b33);
   background-size: 400% 400%;
   animation: gradientShift 15s ease infinite;
 }
@@ -42,11 +42,11 @@ body {
   right: 0;
   bottom: 0;
   background-image: 
-    radial-gradient(2px 2px at 20px 30px, #00BFFF, transparent),
-    radial-gradient(2px 2px at 40px 70px, #8A2BE2, transparent),
-    radial-gradient(1px 1px at 90px 40px, #00FFFF, transparent),
-    radial-gradient(1px 1px at 130px 80px, #FF1493, transparent),
-    radial-gradient(2px 2px at 160px 30px, #00FF00, transparent);
+    radial-gradient(2px 2px at 20px 30px, #00eaff, transparent),
+    radial-gradient(2px 2px at 40px 70px, #7f00ff, transparent),
+    radial-gradient(1px 1px at 90px 40px, #ff00ff, transparent),
+    radial-gradient(1px 1px at 130px 80px, #00eaff, transparent),
+    radial-gradient(2px 2px at 160px 30px, #7f00ff, transparent);
   background-repeat: repeat;
   background-size: 200px 100px;
   animation: particlesMove 20s linear infinite;
@@ -238,6 +238,28 @@ body {
   transform: translateY(-2px);
 }
 
+/* Neon input (glass, semi-transparent) */
+.neon-input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.4);
+  color: #ffffff;
+  border: 2px solid rgba(138, 43, 226, 0.4);
+  backdrop-filter: blur(6px);
+  transition: all 0.25s ease;
+}
+
+.neon-input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.neon-input:focus {
+  outline: none;
+  border-color: #00eaff;
+  box-shadow: 0 0 10px rgba(127, 0, 255, 0.8), 0 0 20px rgba(0, 234, 255, 0.6);
+}
+
 /* Text gradient */
 .text-gradient {
   background: linear-gradient(45deg, #00BFFF, #8A2BE2, #00FFFF);
@@ -246,6 +268,12 @@ body {
   -webkit-text-fill-color: transparent;
   background-size: 200% 200%;
   animation: gradientShift 3s ease infinite;
+}
+
+/* White neon glow for headings */
+.glow-white {
+  color: #ffffff;
+  text-shadow: 0 0 6px rgba(255,255,255,0.6), 0 0 12px rgba(127,0,255,0.5), 0 0 18px rgba(0,234,255,0.4);
 }
 
 /* Utility classes */
