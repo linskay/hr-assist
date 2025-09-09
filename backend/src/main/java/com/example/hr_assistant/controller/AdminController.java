@@ -1,9 +1,9 @@
 package com.example.hr_assistant.controller;
 
 import com.example.hr_assistant.model.AuditLog;
-import com.example.hr_assistant.model.dto.QueueMessage;
 import com.example.hr_assistant.repository.AuditLogRepository;
 import com.example.hr_assistant.service.ml.ModelManager;
+import com.example.hr_assistant.service.ml.TrainingService;
 // import com.example.hr_assistant.service.queue.QueueService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -14,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +30,7 @@ import java.util.Map;
 public class AdminController {
 
     private final ModelManager modelManager;
+    private final TrainingService trainingService;
     // private final QueueService queueService;
     private final AuditLogRepository auditLogRepository;
 
@@ -118,16 +120,12 @@ public class AdminController {
 
     @PostMapping("/ml/train")
     @Operation(summary = "Запуск обучения", description = "Запуск процесса обучения моделей")
-    public ResponseEntity<Map<String, String>> startTraining() {
+    public ResponseEntity<Map<String, Object>> startTraining() {
         try {
             log.info("Запуск обучения моделей администратором");
             
-            // Отправляем задачу обучения в очередь
-            QueueMessage message = new QueueMessage();
-            message.setType(QueueMessage.MessageType.TRAINING);
-            message.setTimestamp(System.currentTimeMillis());
-            
-            // queueService.sendPriorityTask("training.queue", message, 10);
+            // Запускаем обучение моделей
+            Map<String, String> trainingResults = trainingService.trainAllModels();
             
             // Логируем действие
             AuditLog auditLog = new AuditLog();
@@ -136,23 +134,34 @@ public class AdminController {
             auditLog.setCreatedAt(LocalDateTime.now());
             auditLogRepository.save(auditLog);
             
-            Map<String, String> response = Map.of(
-                "status", "success",
-                "message", "Обучение моделей запущено",
-                "timestamp", LocalDateTime.now().toString()
-            );
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "success");
+            response.put("message", "Обучение моделей завершено");
+            response.put("timestamp", LocalDateTime.now().toString());
+            response.put("results", trainingResults);
             
             return ResponseEntity.ok(response);
             
         } catch (Exception e) {
             log.error("Ошибка при запуске обучения: {}", e.getMessage(), e);
             
-            Map<String, String> response = Map.of(
-                "status", "error",
-                "message", "Ошибка запуска обучения: " + e.getMessage()
-            );
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "error");
+            response.put("message", "Ошибка запуска обучения: " + e.getMessage());
             
             return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @GetMapping("/ml/training-stats")
+    @Operation(summary = "Статистика данных обучения", description = "Получение статистики по данным обучения")
+    public ResponseEntity<Map<String, Object>> getTrainingStats() {
+        try {
+            Map<String, Object> stats = trainingService.getTrainingDataStats();
+            return ResponseEntity.ok(stats);
+        } catch (Exception e) {
+            log.error("Ошибка при получении статистики обучения: {}", e.getMessage(), e);
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
 

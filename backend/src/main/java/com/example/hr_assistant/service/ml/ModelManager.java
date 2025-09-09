@@ -55,13 +55,48 @@ public class ModelManager {
      */
     public void loadAllModels() {
         try {
-            loadModel("whisper", mlModelsConfig.getWhisper());
-            loadModel("embeddings", mlModelsConfig.getEmbeddings());
-            loadModel("classifier", mlModelsConfig.getClassifier());
-            loadModel("voice-verification", mlModelsConfig.getVoiceVerification());
-            loadModel("face-recognition", mlModelsConfig.getFaceRecognition());
-            loadModel("liveness", mlModelsConfig.getLiveness());
-            loadModel("ai-detector", mlModelsConfig.getAiDetector());
+            // Загружаем модель только если имя файла задано (иначе используем внешний сервис или пропускаем)
+            if (mlModelsConfig.getWhisper() != null && !mlModelsConfig.getWhisper().isBlank()) {
+                loadModel("whisper", mlModelsConfig.getWhisper());
+            } else {
+                log.info("Пропускаем загрузку локальной Whisper модели (используется WhisperX сервис)");
+            }
+
+            if (mlModelsConfig.getEmbeddings() != null && !mlModelsConfig.getEmbeddings().isBlank()) {
+                loadModel("embeddings", mlModelsConfig.getEmbeddings());
+            } else {
+                log.info("Пропускаем загрузку модели embeddings (используется внешний SBERT сервис)");
+            }
+
+            if (mlModelsConfig.getClassifier() != null && !mlModelsConfig.getClassifier().isBlank()) {
+                loadModel("classifier", mlModelsConfig.getClassifier());
+            } else {
+                log.info("Пропускаем загрузку модели classifier (используется внешний LLM/сервис)");
+            }
+
+            if (mlModelsConfig.getVoiceVerification() != null && !mlModelsConfig.getVoiceVerification().isBlank()) {
+                loadModel("voice-verification", mlModelsConfig.getVoiceVerification());
+            } else {
+                log.info("Пропускаем загрузку модели voice-verification (используется внешний сервис)");
+            }
+
+            if (mlModelsConfig.getFaceRecognition() != null && !mlModelsConfig.getFaceRecognition().isBlank()) {
+                loadModel("face-recognition", mlModelsConfig.getFaceRecognition());
+            } else {
+                log.info("Пропускаем загрузку модели face-recognition (используется внешний видео-антифрод сервис)");
+            }
+
+            if (mlModelsConfig.getLiveness() != null && !mlModelsConfig.getLiveness().isBlank()) {
+                loadModel("liveness", mlModelsConfig.getLiveness());
+            } else {
+                log.info("Пропускаем загрузку модели liveness (используется внешний видео-антифрод сервис)");
+            }
+
+            if (mlModelsConfig.getAiDetector() != null && !mlModelsConfig.getAiDetector().isBlank()) {
+                loadModel("ai-detector", mlModelsConfig.getAiDetector());
+            } else {
+                log.info("Пропускаем загрузку модели ai-detector (используется DetectGPT сервис)");
+            }
             
             log.info("Все модели успешно загружены");
         } catch (Exception e) {

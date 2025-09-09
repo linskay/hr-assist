@@ -94,15 +94,24 @@ services:
       dockerfile: Dockerfile
     container_name: hr-assistant-backend
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/hr_assistant
-      SPRING_DATASOURCE_USERNAME: hr_user
-      SPRING_DATASOURCE_PASSWORD: hr_password
-      SPRING_DATA_REDIS_HOST: redis
-      SPRING_RABBITMQ_HOST: rabbitmq
-      MINIO_ENDPOINT: http://minio:9000
-      MINIO_ACCESS_KEY: minioadmin
-      MINIO_SECRET_KEY: minioadmin
+      SPRING_PROFILES_ACTIVE: dev
+      # Явно отключаем локальные модели (используем внешние сервисы)
+      ML_MODELS_WHISPER: ""
+      ML_MODELS_EMBEDDINGS: ""
+      ML_MODELS_CLASSIFIER: ""
+      ML_MODELS_VOICE_VERIFICATION: ""
+      ML_MODELS_FACE_RECOGNITION: ""
+      ML_MODELS_LIVENESS: ""
+      ML_MODELS_AI_DETECTOR: ""
+      # URL внешних сервисов внутри docker-сети
+      WHISPERX_URL: http://whisperx:9000
       SBERT_URL: http://sbert-embed:8080
+      LLM_URL: http://llm:8090
+      VIDEO_ANTIFRAUD_URL: http://video-antifraud:8091
+      DETECTGPT_URL: http://detectgpt:8092
+      AVATAR_URL: http://avatar:8093
+      TTS_URL: http://tts:8094
+      RUBERT_URL: http://rubert:8095
     ports:
       - "8081:8080"
     volumes:
@@ -181,6 +190,48 @@ services:
       - HF_HOME=/root/.cache/huggingface
     ports:
       - "8092:8092"
+    networks:
+      - hr-assistant-network
+    restart: unless-stopped
+
+  # Avatar Service (SadTalker)
+  avatar:
+    build:
+      context: ./avatar-service
+      dockerfile: Dockerfile
+    container_name: hr-assistant-avatar
+    image: hr-assist/avatar:latest
+    ports:
+      - "8093:8093"
+    networks:
+      - hr-assistant-network
+    restart: unless-stopped
+
+  # TTS Service (Text-to-Speech)
+  tts:
+    build:
+      context: ./tts-service
+      dockerfile: Dockerfile
+    container_name: hr-assistant-tts
+    image: hr-assist/tts:latest
+    ports:
+      - "8094:8094"
+    networks:
+      - hr-assistant-network
+    restart: unless-stopped
+
+  # RuBERT Service (Russian BERT for text analysis)
+  rubert:
+    build:
+      context: ./rubert-service
+      dockerfile: Dockerfile
+    container_name: hr-assistant-rubert
+    image: hr-assist/rubert:latest
+    environment:
+      - TRANSFORMERS_CACHE=/root/.cache/huggingface
+      - HF_HOME=/root/.cache/huggingface
+    ports:
+      - "8095:8095"
     networks:
       - hr-assistant-network
     restart: unless-stopped
