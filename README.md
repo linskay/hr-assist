@@ -43,38 +43,38 @@
 
 ```mermaid
 graph TD
-    A[User]
+    A["User"]
 
     subgraph "User Interface"
-        Frontend[Frontend<br/>(React, Vite)]
+        Frontend["Frontend<br/>(React, Vite)"]
     end
 
     subgraph "Core Backend"
-        Backend[Backend API<br/>(Spring Boot, Java 17)]
+        Backend["Backend API<br/>(Spring Boot, Java 17)"]
     end
 
     subgraph "Data & Messaging"
-        Postgres[(PostgreSQL)]
-        Redis[(Redis)]
-        MinIO[(MinIO S3)]
-        RabbitMQ[(RabbitMQ)]
+        Postgres[("PostgreSQL")]
+        Redis[("Redis")]
+        MinIO[("MinIO S3")]
+        RabbitMQ[("RabbitMQ")]
     end
 
     subgraph "AI/ML Microservices (Python)"
-        WhisperX[WhisperX<br/>ASR]
-        SBERT[SBERT<br/>Embeddings]
-        LLM[LLM<br/>Mistral-7B]
-        RuBERT[RuBERT<br/>Classifier]
-        DetectGPT[DetectGPT<br/>AI Text]
-        VideoAntifraud[Video Antifraud<br/>Face/Liveness]
-        TTS[Coqui TTS<br/>Speech Synthesis]
-        Avatar[SadTalker<br/>Avatar Gen]
+        WhisperX["WhisperX<br/>ASR"]
+        SBERT["SBERT<br/>Embeddings"]
+        LLM["LLM<br/>Mistral-7B"]
+        RuBERT["RuBERT<br/>Classifier"]
+        DetectGPT["DetectGPT<br/>AI Text"]
+        VideoAntifraud["Video Antifraud<br/>Face/Liveness"]
+        TTS["Coqui TTS<br/>Speech Synthesis"]
+        Avatar["SadTalker<br/>Avatar Gen"]
     end
 
     subgraph "Monitoring & Observability"
-        Prometheus[Prometheus]
-        Grafana[Grafana]
-        ELK[ELK Stack<br/>(Elastic, Logstash, Kibana)]
+        Prometheus["Prometheus"]
+        Grafana["Grafana"]
+        ELK["ELK Stack<br/>(Elastic, Logstash, Kibana)"]
     end
 
     A --> Frontend
