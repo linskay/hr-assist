@@ -1,50 +1,59 @@
-from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse
+from fastapi import FastAPI, UploadFile, File, Form
 from pydantic import BaseModel
 from typing import Optional
+import tempfile
 import os
-import uuid
+import subprocess
+import json
 
-app = FastAPI(title="Avatar Service", version="0.1.0")
-
+app = FastAPI(title="Avatar Service", description="Генерация говорящих голов с помощью SadTalker", version="1.0.0")
 
 class AvatarRequest(BaseModel):
-    audio_url: Optional[str] = None
-    audio_path: Optional[str] = None
-    driving_audio_wav: Optional[str] = None
-    face_image_path: Optional[str] = None
+    image_path: str
+    audio_path: str
+    output_path: Optional[str] = None
 
+class AvatarResponse(BaseModel):
+    success: bool
+    output_path: str
+    message: str
 
-OUTPUT_DIR = os.environ.get("AVATAR_OUTPUT_DIR", "/data/avatar")
-os.makedirs(OUTPUT_DIR, exist_ok=True)
-
+@app.post("/generate", response_model=AvatarResponse, summary="Генерация аватара", description="Создает говорящую голову из изображения и аудио")
+async def generate_avatar(
+    image: UploadFile = File(...),
+    audio: UploadFile = File(...),
+    output_format: str = Form("mp4")
+):
+    try:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            # Сохраняем загруженные файлы
+            image_path = os.path.join(tmpdir, f"input_image.{image.filename.split('.')[-1]}")
+            audio_path = os.path.join(tmpdir, f"input_audio.{audio.filename.split('.')[-1]}")
+            output_path = os.path.join(tmpdir, f"output.{output_format}")
+            
+            with open(image_path, "wb") as f:
+                f.write(await image.read())
+            
+            with open(audio_path, "wb") as f:
+                f.write(await audio.read())
+            
+            # Заглушка для dev режима (реальный SadTalker требует GPU и много зависимостей)
+            # В реальной реализации здесь был бы вызов SadTalker
+            dummy_output = f"avatar_generated_{os.path.basename(output_path)}"
+            
+            return AvatarResponse(
+                success=True,
+                output_path=dummy_output,
+                message="[Заглушка Avatar] Аватар сгенерирован (режим разработки)"
+            )
+            
+    except Exception as e:
+        return AvatarResponse(
+            success=False,
+            output_path="",
+            message=f"Ошибка генерации аватара: {str(e)}"
+        )
 
 @app.get("/health")
-def health() -> dict:
-    return {"status": "ok"}
-
-
-@app.post("/generate")
-def generate(req: AvatarRequest):
-    # Placeholder implementation with Kokoro expected pipeline.
-    # For now, just return a stub mp4 path to be replaced when model wired.
-    filename = f"avatar_{uuid.uuid4().hex}.mp4"
-    out_path = os.path.join(OUTPUT_DIR, filename)
-    # Create empty file as stub
-    open(out_path, "wb").close()
-    return {"path": filename}
-
-
-@app.get("/video/{filename}")
-def get_video(filename: str):
-    path = os.path.join(OUTPUT_DIR, filename)
-    if not os.path.isfile(path):
-        raise HTTPException(status_code=404, detail="File not found")
-    return FileResponse(path, media_type="video/mp4")
-
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8200)))
-
-
+def health():
+    return {"status": "ok", "service": "avatar"}

@@ -1,8 +1,8 @@
 package com.example.hr_assistant.service.ml;
 
- 
+import ai.djl.Model;
+import ai.djl.ModelException;
 import ai.djl.inference.Predictor;
-import ai.djl.ndarray.NDList;
 import ai.djl.repository.zoo.Criteria;
 import ai.djl.repository.zoo.ModelZoo;
 import ai.djl.repository.zoo.ZooModel;
@@ -12,11 +12,10 @@ import com.example.hr_assistant.repository.ModelVersionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.beans.factory.annotation.Value;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -28,7 +27,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * Менеджер для загрузки и управления ML моделями
  */
 @Service
-@ConditionalOnProperty(name = "ml.init.enabled", havingValue = "true", matchIfMissing = true)
 @RequiredArgsConstructor
 @Slf4j
 public class ModelManager {
@@ -39,15 +37,8 @@ public class ModelManager {
     private final Map<String, ZooModel<?, ?>> loadedModels = new ConcurrentHashMap<>();
     private final Map<String, Predictor<?, ?>> predictors = new ConcurrentHashMap<>();
 
-    @Value("${ml.init.enabled:true}")
-    private boolean mlInitEnabled;
-
     @PostConstruct
     public void initializeModels() {
-        if (!mlInitEnabled) {
-            log.info("Инициализация ML моделей отключена свойством ml.init.enabled=false");
-            return;
-        }
         log.info("Инициализация ML моделей...");
         loadAllModels();
     }
@@ -64,13 +55,48 @@ public class ModelManager {
      */
     public void loadAllModels() {
         try {
-            loadModel("whisper", mlModelsConfig.getWhisper());
-            loadModel("embeddings", mlModelsConfig.getEmbeddings());
-            loadModel("classifier", mlModelsConfig.getClassifier());
-            loadModel("voice-verification", mlModelsConfig.getVoiceVerification());
-            loadModel("face-recognition", mlModelsConfig.getFaceRecognition());
-            loadModel("liveness", mlModelsConfig.getLiveness());
-            loadModel("ai-detector", mlModelsConfig.getAiDetector());
+            // Загружаем модель только если имя файла задано (иначе используем внешний сервис или пропускаем)
+            if (mlModelsConfig.getWhisper() != null && !mlModelsConfig.getWhisper().isBlank()) {
+                loadModel("whisper", mlModelsConfig.getWhisper());
+            } else {
+                log.info("Пропускаем загрузку локальной Whisper модели (используется WhisperX сервис)");
+            }
+
+            if (mlModelsConfig.getEmbeddings() != null && !mlModelsConfig.getEmbeddings().isBlank()) {
+                loadModel("embeddings", mlModelsConfig.getEmbeddings());
+            } else {
+                log.info("Пропускаем загрузку модели embeddings (используется внешний SBERT сервис)");
+            }
+
+            if (mlModelsConfig.getClassifier() != null && !mlModelsConfig.getClassifier().isBlank()) {
+                loadModel("classifier", mlModelsConfig.getClassifier());
+            } else {
+                log.info("Пропускаем загрузку модели classifier (используется внешний LLM/сервис)");
+            }
+
+            if (mlModelsConfig.getVoiceVerification() != null && !mlModelsConfig.getVoiceVerification().isBlank()) {
+                loadModel("voice-verification", mlModelsConfig.getVoiceVerification());
+            } else {
+                log.info("Пропускаем загрузку модели voice-verification (используется внешний сервис)");
+            }
+
+            if (mlModelsConfig.getFaceRecognition() != null && !mlModelsConfig.getFaceRecognition().isBlank()) {
+                loadModel("face-recognition", mlModelsConfig.getFaceRecognition());
+            } else {
+                log.info("Пропускаем загрузку модели face-recognition (используется внешний видео-антифрод сервис)");
+            }
+
+            if (mlModelsConfig.getLiveness() != null && !mlModelsConfig.getLiveness().isBlank()) {
+                loadModel("liveness", mlModelsConfig.getLiveness());
+            } else {
+                log.info("Пропускаем загрузку модели liveness (используется внешний видео-антифрод сервис)");
+            }
+
+            if (mlModelsConfig.getAiDetector() != null && !mlModelsConfig.getAiDetector().isBlank()) {
+                loadModel("ai-detector", mlModelsConfig.getAiDetector());
+            } else {
+                log.info("Пропускаем загрузку модели ai-detector (используется DetectGPT сервис)");
+            }
             
             log.info("Все модели успешно загружены");
         } catch (Exception e) {
@@ -83,21 +109,15 @@ public class ModelManager {
      */
     public void loadModel(String modelName, String modelFileName) {
         try {
-            Path basePath = Paths.get(mlModelsConfig.getPath());
-            Path modelPath = basePath.resolve(Paths.get(modelName, modelFileName));
-            // Fallback: файл может лежать прямо в корне каталога моделей
+            Path modelPath = Paths.get(mlModelsConfig.getPath(), modelName, modelFileName);
+            
             if (!Files.exists(modelPath)) {
-                Path fallbackPath = basePath.resolve(modelFileName);
-                if (Files.exists(fallbackPath)) {
-                    modelPath = fallbackPath;
-                } else {
-                    log.warn("Модель не найдена: {} или {}", modelPath, fallbackPath);
-                    return;
-                }
+                log.warn("Модель не найдена: {}", modelPath);
+                return;
             }
 
             Criteria<?, ?> criteria = Criteria.builder()
-                .setTypes(NDList.class, NDList.class)
+                .setTypes(Object.class, Object.class)
                 .optModelPath(modelPath)
                 .optEngine("OnnxRuntime")
                 .build();
@@ -106,7 +126,7 @@ public class ModelManager {
             loadedModels.put(modelName, model);
             
             // Создаем предиктор для модели
-            Predictor<NDList, NDList> predictor = ((ZooModel<NDList, NDList>) model).newPredictor();
+            Predictor<?, ?> predictor = model.newPredictor();
             predictors.put(modelName, predictor);
             
             // Сохраняем информацию о модели в БД

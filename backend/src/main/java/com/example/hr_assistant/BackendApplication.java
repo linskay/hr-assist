@@ -5,6 +5,7 @@ import com.example.hr_assistant.service.ml.ModelManager;
 import com.example.hr_assistant.service.storage.MediaStorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -19,7 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
  * Главный класс приложения HR Assistant
  */
 @SpringBootApplication(exclude = {
-    org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration.class
+    org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration.class,
+    org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration.class
 })
 @RestController
 @EnableConfigurationProperties(LlmProperties.class)
@@ -30,7 +32,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class BackendApplication {
 
     private final ModelManager modelManager;
-    private final MediaStorageService mediaStorageService;
+    
+    @Autowired(required = false)
+    private MediaStorageService mediaStorageService;
 
     public static void main(String[] args) {
         SpringApplication.run(BackendApplication.class, args);
@@ -51,13 +55,17 @@ public class BackendApplication {
             log.info("============================================================");
             
             // Инициализация компонентов
-            try {
-                log.info("Инициализация медиа хранилища...");
-                mediaStorageService.initializeBucket();
-                log.info("MinIO bucket успешно инициализирован");
-            } catch (Exception e) {
-                log.error("Ошибка при инициализации MinIO bucket: {}", e.getMessage());
-                log.warn("Продолжаем работу без MinIO (режим разработки)");
+            if (mediaStorageService != null) {
+                try {
+                    log.info("Инициализация медиа хранилища...");
+                    mediaStorageService.initializeBucket();
+                    log.info("MinIO bucket успешно инициализирован");
+                } catch (Exception e) {
+                    log.error("Ошибка при инициализации MinIO bucket: {}", e.getMessage());
+                    log.warn("Продолжаем работу без MinIO (режим разработки)");
+                }
+            } else {
+                log.info("MediaStorageService недоступен (внешние сервисы отключены для dev)");
             }
             
             try {

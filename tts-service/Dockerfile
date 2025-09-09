@@ -1,29 +1,32 @@
 FROM python:3.10-slim
 
-ENV PYTHONUNBUFFERED=1 \
-    PIP_NO_CACHE_DIR=1 \
-    TRANSFORMERS_CACHE=/root/.cache/huggingface \
-    HF_HOME=/root/.cache/huggingface \
-    TORCH_HOME=/root/.cache/torch
-
-RUN apt-get update && apt-get install -y --no-install-recommends \
-        git \
-        ffmpeg \
-    && rm -rf /var/lib/apt/lists/*
-
 WORKDIR /app
 
-COPY requirements.txt ./
-RUN pip install --upgrade pip && pip install -r requirements.txt
+# Установка системных зависимостей для Coqui TTS
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    ffmpeg \
+    espeak \
+    espeak-data \
+    libespeak1 \
+    libespeak-dev \
+    libsndfile1 \
+    libsndfile1-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-COPY main.py ./
+# Установка Python зависимостей
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-ENV TTS_OUTPUT_DIR=/data/tts \
-    TTS_MODEL=tts_models/ru/v3_1/fast_pitch \
-    PORT=8100
+# Создаем директорию для кеша моделей
+RUN mkdir -p /root/.local/share/tts
 
-EXPOSE 8100
+COPY main.py .
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8100"]
+EXPOSE 8094
 
+# Переменные окружения для Coqui TTS
+ENV TTS_CACHE_DIR=/root/.local/share/tts
+ENV CUDA_VISIBLE_DEVICES=""
 
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8094"]
