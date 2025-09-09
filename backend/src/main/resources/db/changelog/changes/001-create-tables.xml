@@ -7,7 +7,7 @@
 
     <changeSet id="001-create-users-table" author="hr-assistant">
         <createTable tableName="users">
-            <column name="id" type="BIGSERIAL">
+            <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="username" type="VARCHAR(50)">
@@ -42,7 +42,7 @@
 
     <changeSet id="002-create-vacancies-table" author="hr-assistant">
         <createTable tableName="vacancies">
-            <column name="id" type="BIGSERIAL">
+            <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="title" type="VARCHAR(200)">
@@ -93,7 +93,7 @@
 
     <changeSet id="003-create-candidates-table" author="hr-assistant">
         <createTable tableName="candidates">
-            <column name="id" type="BIGSERIAL">
+            <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="first_name" type="VARCHAR(50)">
@@ -128,7 +128,7 @@
 
     <changeSet id="004-create-interviews-table" author="hr-assistant">
         <createTable tableName="interviews">
-            <column name="id" type="BIGSERIAL">
+            <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="candidate_id" type="BIGINT">
@@ -187,7 +187,7 @@
 
     <changeSet id="005-create-interview-sessions-table" author="hr-assistant">
         <createTable tableName="interview_sessions">
-            <column name="id" type="BIGSERIAL">
+            <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="interview_id" type="BIGINT">
@@ -220,7 +220,7 @@
 
     <changeSet id="006-create-interview-responses-table" author="hr-assistant">
         <createTable tableName="interview_responses">
-            <column name="id" type="BIGSERIAL">
+            <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="session_id" type="BIGINT">
@@ -262,7 +262,7 @@
 
     <changeSet id="007-create-antifraud-checks-table" author="hr-assistant">
         <createTable tableName="antifraud_checks">
-            <column name="id" type="BIGSERIAL">
+            <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="session_id" type="BIGINT">
@@ -277,7 +277,7 @@
             <column name="score" type="DECIMAL(3,2)">
                 <constraints nullable="false"/>
             </column>
-            <column name="details" type="JSONB">
+            <column name="details" type="TEXT">
                 <constraints nullable="true"/>
             </column>
             <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
@@ -295,7 +295,7 @@
 
     <changeSet id="008-create-interview-analysis-table" author="hr-assistant">
         <createTable tableName="interview_analysis">
-            <column name="id" type="BIGSERIAL">
+            <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="session_id" type="BIGINT">
