@@ -93,7 +93,9 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     container_name: hr-assistant-backend
+    command: ["java", "-Dserver.ssl.enabled=false", "-Dspring.profiles.active=prod", "-Dspring.jpa.hibernate.ddl-auto=validate", "-jar", "app.jar"]
     environment:
+
       SPRING_PROFILES_ACTIVE: dev
       # Явно отключаем локальные модели (используем внешние сервисы)
       ML_MODELS_WHISPER: ""
@@ -112,10 +114,11 @@ services:
       AVATAR_URL: http://avatar:8093
       TTS_URL: http://tts:8094
       RUBERT_URL: http://rubert:8095
+
     ports:
       - "8081:8080"
     volumes:
-      - ./models:/opt/models:ro
+      - ./:/models:ro
       - backend_logs:/app/logs
     depends_on:
       - postgres
@@ -162,6 +165,44 @@ services:
       - hr-assistant-network
     restart: unless-stopped
 
+  # TTS Service (Coqui TTS)
+  tts:
+    build:
+      context: ./tts-service
+      dockerfile: Dockerfile
+    container_name: hr-assistant-tts
+    image: hr-assist/tts:latest
+    environment:
+      - TRANSFORMERS_CACHE=/root/.cache/huggingface
+      - HF_HOME=/root/.cache/huggingface
+      - TORCH_HOME=/root/.cache/torch
+      - TTS_MODEL=tts_models/ru/v3_1/fast_pitch
+      - TTS_OUTPUT_DIR=/data/tts
+    volumes:
+      - tts_output:/data/tts
+    ports:
+      - "8100:8100"
+    networks:
+      - hr-assistant-network
+    restart: unless-stopped
+
+  # Avatar Service (Kokoro - talking head)
+  avatar:
+    build:
+      context: ./avatar-service
+      dockerfile: Dockerfile
+    container_name: hr-assistant-avatar
+    image: hr-assist/avatar:latest
+    environment:
+      - AVATAR_OUTPUT_DIR=/data/avatar
+    volumes:
+      - avatar_output:/data/avatar
+    ports:
+      - "8200:8200"
+    networks:
+      - hr-assistant-network
+    restart: unless-stopped
+
   # Video Antifraud Service (DeepFace + MediaPipe)
   video-antifraud:
     build:
@@ -194,6 +235,7 @@ services:
       - hr-assistant-network
     restart: unless-stopped
 
+
   # Avatar Service (SadTalker)
   avatar:
     build:
@@ -221,6 +263,7 @@ services:
     restart: unless-stopped
 
   # RuBERT Service (Russian BERT for text analysis)
+
   rubert:
     build:
       context: ./rubert-service
@@ -240,7 +283,6 @@ services:
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
     container_name: hr-assistant-frontend
     ports:
       - "3000:80"
@@ -336,6 +378,8 @@ volumes:
   grafana_data:
   elasticsearch_data:
   whisperx_models:
+  tts_output:
+  avatar_output:
 
 networks:
   hr-assistant-network:

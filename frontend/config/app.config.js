@@ -10,10 +10,6 @@ export const appConfig = {
     baseUrl: process.env.VITE_API_URL || 'http://localhost:8080/api',
     timeout: 10000,
   },
-
-  asr: {
-    whisperxUrl: process.env.VITE_WHISPERX_URL || 'http://localhost:9000',
-  },
   
   // UI настройки
   ui: {

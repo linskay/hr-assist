@@ -1,168 +1,116 @@
 import React from 'react';
+import { motion } from 'framer-motion';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
+import { RadarChart } from '@/components/ui/radarchart';
+import { Download, Share2, MessageSquareQuote } from 'lucide-react';
 
-export default function ReportScreen() {
+const mockReport = {
+  candidateName: 'Иван Иванов',
+  overallScore: 82,
+  scores: [
+    { name: 'Гибкие навыки (Soft Skills)', value: 75 },
+    { name: 'Технические навыки (Tech Skills)', value: 88 },
+    { name: 'Соответствие культуре', value: 80 },
+  ],
+  strengths: ['Отличные технические навыки', 'Опыт работы в команде', 'Знание современных технологий'],
+  areasForDevelopment: ['Лидерские качества', 'Навыки презентации', 'Управление проектами'],
+};
+
+const ReportScreen: React.FC = () => {
   return (
-    <div className="p-6 space-y-8">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="p-4 md:p-8 space-y-8"
+    >
       {/* Header */}
-      <div className="text-center space-y-4">
-        <h1 className="text-5xl font-black text-gradient animate-pulse">
-          🤖 AI Анализ Кандидата
-        </h1>
-        <p className="text-xl opacity-80">
-          Интеллектуальный отчет с анализом компетенций и рекомендациями ✨
-        </p>
-      </div>
-
-      {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="card-neon neon-glow hover:neon-glow-purple transition-all duration-300 group p-6 text-center">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-neon-blue to-neon-purple flex items-center justify-center">
-            <span className="text-3xl">📈</span>
-          </div>
-          <h3 className="text-4xl font-bold text-neon-blue group-hover:text-neon-purple transition-colors">82%</h3>
-          <p className="text-sm opacity-70">Общая оценка</p>
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+        <div>
+          <h1 className="text-4xl font-bold text-white">Отчет по кандидату</h1>
+          <p className="text-white/60 mt-1">AI-аналитика для {mockReport.candidateName}</p>
         </div>
-
-        <div className="card-neon neon-glow-cyan hover:neon-glow transition-all duration-300 group p-6 text-center">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-neon-cyan to-neon-blue flex items-center justify-center">
-            <span className="text-3xl">⭐</span>
-          </div>
-          <h3 className="text-4xl font-bold text-neon-cyan group-hover:text-neon-blue transition-colors">4.2</h3>
-          <p className="text-sm opacity-70">Средний балл</p>
-        </div>
-
-        <div className="card-neon neon-glow-purple hover:neon-glow-cyan transition-all duration-300 group p-6 text-center">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-neon-purple to-neon-pink flex items-center justify-center">
-            <span className="text-3xl">🏆</span>
-          </div>
-          <h3 className="text-4xl font-bold text-neon-purple group-hover:text-neon-cyan transition-colors">7/10</h3>
-          <p className="text-sm opacity-70">Компетенции</p>
-        </div>
-
-        <div className="card-neon neon-glow hover:neon-glow-purple transition-all duration-300 group p-6 text-center">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-neon-green to-neon-cyan flex items-center justify-center">
-            <span className="text-3xl">👥</span>
-          </div>
-          <h3 className="text-4xl font-bold text-neon-green group-hover:text-neon-purple transition-colors">85%</h3>
-          <p className="text-sm opacity-70">Совпадение</p>
+        <div className="flex gap-2">
+          <Button variant="secondary">
+            <Share2 className="mr-2 h-5 w-5" />
+            Поделиться
+          </Button>
+          <Button>
+            <Download className="mr-2 h-5 w-5" />
+            Экспорт в PDF
+          </Button>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Competency Chart */}
-        <div className="card-neon neon-glow-purple p-6">
-          <div className="flex items-center space-x-3 mb-6">
-            <span className="text-3xl">📊</span>
-            <h2 className="text-2xl font-bold">Анализ Компетенций</h2>
-          </div>
-          <div className="h-80 flex items-center justify-center">
-            <p className="text-lg opacity-70">Радарная диаграмма будет здесь</p>
-          </div>
+      {/* Main Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Left Column - Scores and Breakdown */}
+        <div className="lg:col-span-2 space-y-8">
+          <Card glow="accent">
+            <CardContent className="p-6">
+              <h2 className="text-2xl font-bold mb-4 text-brand-highlight-aqua">Общая оценка</h2>
+              <div className="text-7xl font-bold text-center my-8">
+                {mockReport.overallScore}%
+              </div>
+              <p className="text-center text-white/60">На основе комплексного анализа собеседования.</p>
+            </CardContent>
+          </Card>
+          <Card glow="aqua">
+            <CardContent className="p-6">
+              <h2 className="text-2xl font-bold mb-4 text-brand-highlight-aqua">Разбивка по баллам</h2>
+              <div className="space-y-4">
+                {mockReport.scores.map(score => (
+                  <div key={score.name}>
+                    <div className="flex justify-between mb-1">
+                      <span className="font-semibold">{score.name}</span>
+                      <span className="text-brand-highlight-aqua">{score.value}%</span>
+                    </div>
+                    <Progress value={score.value} />
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
-        {/* Key Quotes */}
-        <div className="card-neon neon-glow-cyan p-6">
-          <div className="flex items-center space-x-3 mb-6">
-            <span className="text-3xl">💬</span>
-            <h2 className="text-2xl font-bold">Ключевые Цитаты</h2>
-          </div>
-          <div className="space-y-4">
-            <div className="p-4 rounded-lg bg-gradient-to-r from-neon-blue from-opacity-10 to-neon-purple to-opacity-10 border border-neon-blue border-opacity-20">
-              <p className="italic">«Я координировал проект из 5 человек и успешно внедрил микросервисную архитектуру»</p>
-              <p className="text-sm opacity-60 mt-2">— О лидерстве и технических навыках</p>
+        {/* Right Column - Competency Chart */}
+        <div className="lg:col-span-1">
+          <Card glow="pink" className="h-full">
+            <CardContent className="p-6">
+              <h2 className="text-2xl font-bold mb-4 text-brand-highlight-pink">Радар компетенций</h2>
+              <RadarChart />
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* AI Summary */}
+      <Card>
+        <CardContent className="p-6">
+          <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+            <MessageSquareQuote className="text-brand-accent" />
+            AI-резюме и рекомендации
+          </h2>
+          <div className="grid md:grid-cols-2 gap-6 text-sm">
+            <div>
+              <h3 className="font-bold text-lg text-green-400 mb-2">Сильные стороны</h3>
+              <ul className="list-disc list-inside space-y-1 text-white/80">
+                {mockReport.strengths.map(s => <li key={s}>{s}</li>)}
+              </ul>
             </div>
-            
-            <div className="p-4 rounded-lg bg-gradient-to-r from-neon-cyan from-opacity-10 to-neon-blue to-opacity-10 border border-neon-cyan border-opacity-20">
-              <p className="italic">«Успешно внедрил Jira и настроил CI/CD pipeline, что сократило время деплоя на 60%»</p>
-              <p className="text-sm opacity-60 mt-2">— О процессе разработки</p>
-            </div>
-            
-            <div className="p-4 rounded-lg bg-gradient-to-r from-neon-purple from-opacity-10 to-neon-pink to-opacity-10 border border-neon-purple border-opacity-20">
-              <p className="italic">«Работал с Spring Boot, PostgreSQL и Docker в команде из 8 разработчиков»</p>
-              <p className="text-sm opacity-60 mt-2">— О техническом опыте</p>
+            <div>
+              <h3 className="font-bold text-lg text-yellow-400 mb-2">Зоны роста</h3>
+              <ul className="list-disc list-inside space-y-1 text-white/80">
+                {mockReport.areasForDevelopment.map(a => <li key={a}>{a}</li>)}
+              </ul>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Detailed Analysis */}
-      <div className="card-neon p-6">
-        <h2 className="text-3xl font-bold mb-6">🔍 Детальный Анализ</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-neon-blue">✅ Сильные стороны</h3>
-            <ul className="space-y-2">
-              <li className="flex items-center space-x-2">
-                <div className="w-2 h-2 rounded-full bg-neon-green"></div>
-                <span className="text-sm">Отличные технические навыки</span>
-              </li>
-              <li className="flex items-center space-x-2">
-                <div className="w-2 h-2 rounded-full bg-neon-green"></div>
-                <span className="text-sm">Опыт работы в команде</span>
-              </li>
-              <li className="flex items-center space-x-2">
-                <div className="w-2 h-2 rounded-full bg-neon-green"></div>
-                <span className="text-sm">Знание современных технологий</span>
-              </li>
-            </ul>
-          </div>
-          
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-neon-cyan">🔄 Области для развития</h3>
-            <ul className="space-y-2">
-              <li className="flex items-center space-x-2">
-                <div className="w-2 h-2 rounded-full bg-yellow-400"></div>
-                <span className="text-sm">Лидерские качества</span>
-              </li>
-              <li className="flex items-center space-x-2">
-                <div className="w-2 h-2 rounded-full bg-yellow-400"></div>
-                <span className="text-sm">Презентационные навыки</span>
-              </li>
-              <li className="flex items-center space-x-2">
-                <div className="w-2 h-2 rounded-full bg-yellow-400"></div>
-                <span className="text-sm">Управление проектами</span>
-              </li>
-            </ul>
-          </div>
-          
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-neon-purple">💡 Рекомендации</h3>
-            <ul className="space-y-2">
-              <li className="flex items-center space-x-2">
-                <div className="w-2 h-2 rounded-full bg-neon-blue"></div>
-                <span className="text-sm">Подходит для Senior позиции</span>
-              </li>
-              <li className="flex items-center space-x-2">
-                <div className="w-2 h-2 rounded-full bg-neon-blue"></div>
-                <span className="text-sm">Рекомендуется к найму</span>
-              </li>
-              <li className="flex items-center space-x-2">
-                <div className="w-2 h-2 rounded-full bg-neon-blue"></div>
-                <span className="text-sm">Потенциал для роста</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      {/* Action Buttons */}
-      <div className="flex flex-wrap gap-4 justify-center">
-        <button className="btn-neon flex items-center space-x-2">
-          <span>📥</span>
-          <span>Экспорт PDF</span>
-        </button>
-        
-        <button className="btn-neon-purple flex items-center space-x-2">
-          <span>💾</span>
-          <span>Сохранить отчет</span>
-        </button>
-        
-        <button className="btn-neon-cyan flex items-center space-x-2">
-          <span>📊</span>
-          <span>Детальная аналитика</span>
-        </button>
-      </div>
-    </div>
+        </CardContent>
+      </Card>
+    </motion.div>
   );
-}
+};
+
+export default ReportScreen;
