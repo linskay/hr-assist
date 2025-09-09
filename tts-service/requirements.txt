@@ -1,7 +1,6 @@
-fastapi==0.111.0
-uvicorn[standard]==0.30.1
+uvicorn[standard]==0.30.0
+python-multipart==0.0.6
 TTS==0.22.0
-torch==2.3.1
-numpy==1.22.0
-pydantic==2.7.1
-
+torch==2.1.0
+numpy==1.26.4
+scipy==1.11.4
