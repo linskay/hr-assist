@@ -43,18 +43,13 @@
 
 ```mermaid
 graph TD
-    subgraph " "
-        direction LR
-        A[User]
-    end
+    A[User]
 
     subgraph "User Interface"
-        direction LR
         Frontend[Frontend<br/>(React, Vite)]
     end
 
     subgraph "Core Backend"
-        direction LR
         Backend[Backend API<br/>(Spring Boot, Java 17)]
     end
 
@@ -77,7 +72,6 @@ graph TD
     end
 
     subgraph "Monitoring & Observability"
-        direction LR
         Prometheus[Prometheus]
         Grafana[Grafana]
         ELK[ELK Stack<br/>(Elastic, Logstash, Kibana)]
