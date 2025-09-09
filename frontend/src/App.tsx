@@ -11,6 +11,10 @@ import LoginPage from './components/auth/LoginPage';
 import SettingsPage from './components/screens/SettingsPage';
 import NotFound from './components/screens/NotFound';
 import CookieConsent from './components/layout/CookieConsent';
+import VacanciesPage from './components/screens/VacanciesPage';
+import ResumeAnalysisPage from './components/screens/ResumeAnalysisPage';
+import CompetencyMatrixPage from './components/screens/CompetencyMatrixPage';
+import CallArchivePage from './components/screens/CallArchivePage';
 
 function AppRoutes() {
   const location = useLocation();
@@ -29,6 +33,10 @@ function AppRoutes() {
               <Layout>
                 <Routes>
                   <Route path="dashboard" element={<Dashboard />} />
+                  <Route path="vacancies" element={<VacanciesPage />} />
+                  <Route path="resume-analysis" element={<ResumeAnalysisPage />} />
+                  <Route path="competency-matrix" element={<CompetencyMatrixPage />} />
+                  <Route path="call-archive" element={<CallArchivePage />} />
                   <Route path="interviews/:id" element={<InterviewScreen />} />
                   <Route path="reports/:id" element={<ReportScreen />} />
                   <Route path="settings" element={<SettingsPage />} />
@@ -48,7 +56,7 @@ function AppRoutes() {
 function App() {
   return (
     <Router>
-      <div className="min-h-screen gradient-bg particles">
+      <div className="min-h-screen particles">
         <AppRoutes />
         <CookieConsent />
         <Toaster

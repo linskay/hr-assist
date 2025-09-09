@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Loader } from '@/components/ui/loader';
 import { Mic, MoveRight, Square, Video, VideoOff, Wifi, WifiOff, X, Maximize, Minimize } from 'lucide-react';
 import Typewriter from '@/components/ui/typewriter';
+import Webcam from 'react-webcam';
 
 // A placeholder for the audio visualizer
 const AudioVisualizer = () => (
@@ -35,7 +36,6 @@ export default function InterviewScreen() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [mediaStream, setMediaStream] = useState<MediaStream | null>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
 
   const questions = [
     "Расскажите о себе и своем опыте работы.",
@@ -56,7 +56,6 @@ export default function InterviewScreen() {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
         setMediaStream(stream);
-        if (videoRef.current) videoRef.current.srcObject = stream;
       } catch (error) {
         toast.error('Не удалось получить доступ к камере и микрофону.');
       }
@@ -186,13 +185,27 @@ export default function InterviewScreen() {
       <main className="flex-1 grid md:grid-cols-3 gap-4 p-4 overflow-hidden">
         {/* Video & Question */}
         <div className="md:col-span-2 flex flex-col gap-4 h-full">
-          <div className="flex-1 relative flex items-center justify-center bg-black/30 rounded-lg">
-            <video ref={videoRef} autoPlay muted playsInline className="h-full w-full object-contain rounded-lg" />
-            {isRecording && (
-              <div className="absolute top-4 left-4 flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/80 text-white animate-pulse">
-                <Mic size={16} /> ЗАПИСЬ
+          <div className="flex-1 grid grid-rows-2 gap-4">
+            {/* AI Avatar */}
+            <div className="bg-black/30 rounded-lg flex items-center justify-center relative overflow-hidden shadow-neon-glow-accent">
+              <img src="/avatar-placeholder.png" alt="AI Avatar" className="h-full w-full object-cover" />
+              <div className="absolute bottom-4 left-4 px-3 py-1 rounded-full bg-black/50 text-white text-sm">
+                Нейро-ассистент
               </div>
-            )}
+            </div>
+            {/* User Camera */}
+            <div className="bg-black/30 rounded-lg flex items-center justify-center relative">
+              <Webcam
+                audio={false}
+                mirrored={true}
+                className="h-full w-full object-contain rounded-lg"
+              />
+              {isRecording && (
+                <div className="absolute top-4 left-4 flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/80 text-white animate-pulse">
+                  <Mic size={16} /> ЗАПИСЬ
+                </div>
+              )}
+            </div>
           </div>
           <Card glow="accent" className="flex-shrink-0">
             <CardContent className="p-4">
