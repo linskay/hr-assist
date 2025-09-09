@@ -1,6 +1,4 @@
 FROM python:3.10-slim
-
-
 WORKDIR /app
 
 # Установка системных зависимостей для Coqui TTS
