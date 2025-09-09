@@ -1,426 +1,298 @@
-# HR Assistant — система проведения интервью с AI
+# HR Assistant — AI-Powered Interview Platform
 
-Комплексная платформа для интервью: транскрипция речи, семантический анализ соответствия вакансии, антифрод по тексту и видео, генерация объяснений для рекрутера.
+**Комплексная Open-Source платформа для автоматизации технических интервью с использованием AI.**
 
+Этот проект представляет собой сложную микросервисную систему, предназначенную для проведения, анализа и оценки собеседований. Она включает в себя транскрипцию речи, семантический анализ, антифрод-механизмы и генерацию ИИ-объяснений для рекрутеров.
 
-## 🚀 Возможности
+![Java](https://img.shields.io/badge/Java-17-blue.svg?style=for-the-badge&logo=openjdk)
+![Spring](https://img.shields.io/badge/Spring_Boot-3.2-success.svg?style=for-the-badge&logo=spring)
+![Python](https://img.shields.io/badge/Python-3.9-blue.svg?style=for-the-badge&logo=python)
+![React](https://img.shields.io/badge/React-18-blue.svg?style=for-the-badge&logo=react)
+![Docker](https://img.shields.io/badge/Docker-blue.svg?style=for-the-badge&logo=docker)
+![Kubernetes](https.img.shields.io/badge/Kubernetes-blue.svg?style=for-the-badge&logo=kubernetes)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue.svg?style=for-the-badge&logo=postgresql)
+![RabbitMQ](https://img.shields.io/badge/RabbitMQ-red.svg?style=for-the-badge&logo=rabbitmq)
+![Redis](https://img.shields.io/badge/Redis-red.svg?style=for-the-badge&logo=redis)
+![MinIO](https://img.shields.io/badge/MinIO-red.svg?style=for-the-badge&logo=minio)
+![Prometheus](https://img.shields.io/badge/Prometheus-orange.svg?style=for-the-badge&logo=prometheus)
+![Grafana](https://img.shields.io/badge/Grafana-orange.svg?style=for-the-badge&logo=grafana)
+![ELK](https://img.shields.io/badge/ELK_Stack-orange.svg?style=for-the-badge&logo=elasticsearch)
+![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)
 
-- **Проведение интервью** с записью аудио/видео
-- **Авто-транскрипция** речи (WhisperX)
-- **Семантическое сравнение** ответов с требованиями (SBERT)
-- **Классификация соответствия** (RuBERT)
-- **Объяснения LLM** (Mistral-7B)
-- **Антифрод**: DetectGPT (AI-текст), DeepFace/MediaPipe (verify/liveness)
-- **TTS синтез** русской речи (Coqui TTS)
-- **Аватар сервис** (SadTalker/Kokoro)
+---
 
-## 🧠 ML Модели и Сервисы
+> ### ⚠️ **Важное замечание**
+> Этот проект в первую очередь является демонстрацией **масштабируемой, событийно-ориентированной архитектуры** и **конвейера обработки данных (data pipeline)** для сложных AI/ML задач. Фронтенд-часть (UI) является функциональной, но не была в фокусе разработки. Основное внимание уделено бэкенду, микросервисам, инфраструктуре и обработке данных.
 
-### Внешние ML сервисы (Docker)
-- **WhisperX** (порт 9100) - транскрипция речи
-- **SBERT** (порт 8088) - семантические эмбеддинги
-- **LLM** (порт 8090) - генерация объяснений (Mistral-7B)
-- **RuBERT** (порт 8095) - анализ русского текста
-- **DetectGPT** (порт 8092) - детекция AI-текста
-- **Video Antifraud** (порт 8091) - верификация лиц и живости
-- **TTS** (порт 8094) - синтез русской речи (Coqui TTS)
-- **Avatar** (порт 8093) - генерация аватара (SadTalker)
+## 🚀 Ключевые возможности
 
-### Данные обучения
-- **Классификатор соответствия**: `it_dataset_combined_10000.csv` (10,000 записей)
-- **Детекция живости**: `liveness_detection.csv` (60 записей)
-- **Детекция AI**: `ai_text_detection.csv` (40 записей)
-- **Антифрод данные**: `antifraud_data.csv` (30 записей)
+- **Проведение интервью**: Запись аудио и видео кандидатов.
+- **Авто-транскрипция**: Высокоточная расшифровка речи с помощью **WhisperX**.
+- **Семантический анализ**: Сравнение ответов кандидата с требованиями вакансии через **SBERT**.
+- **Классификация**: Оценка соответствия кандидата с помощью **RuBERT**.
+- **AI-объяснения**: Генерация развернутых отчетов для HR с помощью **LLM (Mistral-7B)**.
+- **Антифрод-система**:
+  - **Текст**: Детекция текста, сгенерированного ИИ (**DetectGPT**).
+  - **Видео**: Верификация личности и детекция "живости" (**DeepFace/MediaPipe**).
+- **Синтез речи**: Озвучивание текста на русском языке (**Coqui TTS**).
+- **Генерация аватара**: Создание анимированного аватара по фото (**SadTalker**).
 
-## 🏗️ Архитектура
+## 🏗️ Архитектура системы
 
-```
-Frontend (React)  <-->  Backend (Spring Boot)  <-->  ML Services (Docker)
-                             |                           |
-                    ---------------------------    ---------------------
-                    |           |             |    |                   |
-                 Postgres     Redis        MinIO   WhisperX  SBERT   LLM
-                                                      |        |      |
-                                                 RuBERT  DetectGPT  TTS
+Диаграмма ниже иллюстрирует взаимодействие между компонентами системы.
+
+```mermaid
+graph TD
+    subgraph " "
+        direction LR
+        A[User]
+    end
+
+    subgraph "User Interface"
+        direction LR
+        Frontend[Frontend<br/>(React, Vite)]
+    end
+
+    subgraph "Core Backend"
+        direction LR
+        Backend[Backend API<br/>(Spring Boot, Java 17)]
+    end
+
+    subgraph "Data & Messaging"
+        Postgres[(PostgreSQL)]
+        Redis[(Redis)]
+        MinIO[(MinIO S3)]
+        RabbitMQ[(RabbitMQ)]
+    end
+
+    subgraph "AI/ML Microservices (Python)"
+        WhisperX[WhisperX<br/>ASR]
+        SBERT[SBERT<br/>Embeddings]
+        LLM[LLM<br/>Mistral-7B]
+        RuBERT[RuBERT<br/>Classifier]
+        DetectGPT[DetectGPT<br/>AI Text]
+        VideoAntifraud[Video Antifraud<br/>Face/Liveness]
+        TTS[Coqui TTS<br/>Speech Synthesis]
+        Avatar[SadTalker<br/>Avatar Gen]
+    end
+
+    subgraph "Monitoring & Observability"
+        direction LR
+        Prometheus[Prometheus]
+        Grafana[Grafana]
+        ELK[ELK Stack<br/>(Elastic, Logstash, Kibana)]
+    end
+
+    A --> Frontend
+    Frontend <--> Backend
+
+    Backend --> Postgres
+    Backend --> Redis
+    Backend --> MinIO
+    Backend --> RabbitMQ
+
+    Backend --> WhisperX
+    Backend --> SBERT
+    Backend --> LLM
+    Backend --> RuBERT
+    Backend --> DetectGPT
+    Backend --> VideoAntifraud
+    Backend --> TTS
+    Backend --> Avatar
+
+    Backend --> Prometheus
+    Backend --> ELK
+    WhisperX --> Prometheus
+    SBERT --> Prometheus
+    LLM --> Prometheus
+    RuBERT --> Prometheus
+    DetectGPT --> Prometheus
+    VideoAntifraud --> Prometheus
+    TTS --> Prometheus
+    Avatar --> Prometheus
+
+    Prometheus --> Grafana
 ```
 
 ## 📦 Структура проекта
 
 ```
 hr-assist/
-  backend/                   # Spring Boot API (/api/v1)
-  frontend/                  # React UI
-  whisperx-service/          # ASR (WhisperX)
+  backend/                   # Spring Boot API (Java 17)
+  frontend/                  # React UI (TypeScript, Vite)
+  avatar-service/            # SadTalker аватар
+  detectgpt-service/         # DetectGPT антифрод
   embed-service/             # SBERT эмбеддинги
   llm-service/               # LLM (Mistral-7B)
   rubert-service/            # RuBERT анализ текста
-  detectgpt-service/         # DetectGPT антифрод
-  video-antifraud-service/   # DeepFace+MediaPipe
   tts-service/               # Coqui TTS
-  avatar-service/            # SadTalker аватар
-  models/                    # локальные веса (опционально)
-  monitoring/                # Prometheus/Grafana/ELK
-  helm/                      # Helm-чарты
-  docker-compose.yml         # Оркестрация
+  video-antifraud-service/   # DeepFace + MediaPipe
+  whisperx-service/          # ASR (WhisperX)
+  models/                    # ML модели (ONNX, GGUF, etc.)
+  monitoring/                # Prometheus, Grafana, ELK
+  helm/                      # Helm-чарты для Kubernetes
+  docker-compose.yml         # Оркестрация для локального запуска
 ```
 
-## 📋 Требования
-
-### Системные требования
-- **Java 17+** (OpenJDK или Oracle JDK)
-- **Node.js 18+** (для frontend разработки)
-- **Docker 20.10+** и **Docker Compose 2.0+**
-- **Git** (для клонирования репозитория)
+## 📋 Системные требования
 
 ### Аппаратные требования
+Для запуска этого проекта требуется значительный объем ресурсов, особенно при одновременной работе всех ML-сервисов.
 
-#### Минимальная конфигурация (только backend + база данных)
-- **CPU**: 4 ядра (Intel i5/AMD Ryzen 5 или лучше)
-- **RAM**: 8 GB
+#### Минимальная конфигурация (только backend, DB, и 1-2 ML сервиса)
+- **CPU**: 4+ ядер (Intel i5 / AMD Ryzen 5)
+- **RAM**: 8+ GB
 - **Диск**: 20 GB свободного места (SSD рекомендуется)
-- **Сеть**: стабильное интернет-соединение для загрузки Docker образов
 
-#### Рекомендуемая конфигурация (все ML сервисы)
-- **CPU**: 8+ ядер (Intel i7/AMD Ryzen 7 или лучше)
+#### Рекомендуемая конфигурация (все сервисы для разработки)
+- **CPU**: 8+ ядер (Intel i7 / AMD Ryzen 7)
 - **RAM**: 16+ GB
 - **Диск**: 50+ GB свободного места (SSD обязательно)
-- **GPU**: NVIDIA RTX 3060+ (опционально, для ускорения ML)
-- **Сеть**: стабильное интернет-соединение
+- **GPU**: NVIDIA RTX 3060+ (опционально, для ускорения ML-моделей)
 
-#### Профессиональная конфигурация (продакшн-подобная)
-- **CPU**: 16+ ядер (Intel i9/AMD Ryzen 9 или Xeon/EPYC)
+#### Профессиональная конфигурация (для production-like окружения)
+- **CPU**: 16+ ядер (Intel i9 / AMD Ryzen 9 / Xeon)
 - **RAM**: 32+ GB
 - **Диск**: 100+ GB NVMe SSD
-- **GPU**: NVIDIA RTX 4080+ или A100 (для ML ускорения)
-- **Сеть**: гигабитное соединение
+- **GPU**: NVIDIA RTX 4080+ / A100 (для ML-ускорения)
 
-### Требования к операционной системе
+### Программные требования
+- **Java 17+**
+- **Node.js 18+**
+- **Docker & Docker Compose**
+- **Git**
 
-#### Windows
-- **Windows 10/11** (64-bit)
-- **WSL2** (рекомендуется для лучшей производительности Docker)
-- **Docker Desktop** с включенным WSL2 backend
-- **PowerShell 5.1+** или **PowerShell Core 7+**
+### Используемые порты
+Убедитесь, что следующие порты свободны на вашей машине:
+- **Frontend**: `3000`
+- **Backend**: `8081`
+- **PostgreSQL**: `5432`
+- **Redis**: `6379`
+- **RabbitMQ**: `5672` (AMQP), `15672` (Management UI)
+- **MinIO**: `9002` (API), `9003` (Console)
+- **WhisperX**: `9100`
+- **SBERT**: `8088`
+- **LLM**: `8090`
+- **Video Antifraud**: `8091`
+- **DetectGPT**: `8092`
+- **Avatar**: `8093`
+- **TTS**: `8094`
+- **RuBERT**: `8095`
+- **Prometheus**: `9090`
+- **Grafana**: `3001`
+- **Elasticsearch**: `9200`
+- **Kibana**: `5601`
 
-#### macOS
-- **macOS 10.15+** (Catalina или новее)
-- **Docker Desktop** для Mac
-- **Homebrew** (для установки зависимостей)
+### Производительность ML-сервисов (ориентировочно)
 
-#### Linux
-- **Ubuntu 20.04+**, **CentOS 8+**, **RHEL 8+** или аналогичные
-- **Docker Engine** и **Docker Compose**
-- **curl**, **wget**, **git**
+| Сервис             | CPU (ядра) | RAM (GB) | Время обработки (на CPU)   | GPU Ускорение |
+|--------------------|:----------:|:--------:|----------------------------|:-------------:|
+| **WhisperX**       |    2-4     |   2-4    | ~2-5 сек / 1 мин аудио     |      Да       |
+| **SBERT**          |    1-2     |   1-2    | ~100-500 мс / запрос       |      Да       |
+| **LLM (Mistral-7B)** |    6-8     |   8-12   | ~2-10 сек / запрос         |    **x3-5**   |
+| **RuBERT**         |    2-4     |   2-4    | ~0.5-2 сек / запрос        |      Да       |
+| **DetectGPT**      |    1-2     |   1-2    | ~200-800 мс / запрос       |      Да       |
+| **Video Antifraud**|    4-6     |   4-6    | ~3-8 сек / видео           | **Рекомендуется** |
+| **TTS (Coqui)**    |    2-4     |   2-4    | ~1-3 сек / предложение     |      Нет      |
+| **Avatar (SadTalker)**|    4-6     |   4-8    | ~10-30 сек / аватар        | **Рекомендуется** |
 
-### Порты (должны быть свободны)
-- **8081** - Backend API
-- **3000** - Frontend
-- **5432** - PostgreSQL
-- **6379** - Redis
-- **5672** - RabbitMQ
-- **9002-9003** - MinIO
-- **8088** - SBERT
-- **8090** - LLM
-- **8091** - Video Antifraud
-- **8092** - DetectGPT
-- **8093** - Avatar
-- **8094** - TTS
-- **8095** - RuBERT
-- **9100** - WhisperX
-- **9090** - Prometheus
-- **3001** - Grafana
-- **9200** - Elasticsearch
-- **5601** - Kibana
-- **15672** - RabbitMQ Management
+### Скрипты проверки системы
 
-### Производительность ML сервисов
-
-#### WhisperX (транскрипция)
-- **CPU**: 2-4 ядра
-- **RAM**: 2-4 GB
-- **Время обработки**: ~2-5 сек на 1 минуту аудио
-
-#### SBERT (эмбеддинги)
-- **CPU**: 1-2 ядра
-- **RAM**: 1-2 GB
-- **Время обработки**: ~100-500 мс на запрос
-
-#### LLM (Mistral-7B)
-- **CPU**: 6-8 ядер
-- **RAM**: 8-12 GB
-- **Время обработки**: ~2-10 сек на запрос
-- **GPU**: RTX 3060+ (ускоряет в 3-5 раз)
-
-#### RuBERT (анализ текста)
-- **CPU**: 2-4 ядра
-- **RAM**: 2-4 GB
-- **Время обработки**: ~500 мс - 2 сек на запрос
-
-#### DetectGPT (антифрод)
-- **CPU**: 1-2 ядра
-- **RAM**: 1-2 GB
-- **Время обработки**: ~200-800 мс на запрос
-
-#### Video Antifraud
-- **CPU**: 4-6 ядер
-- **RAM**: 4-6 GB
-- **GPU**: RTX 3060+ (рекомендуется)
-- **Время обработки**: ~3-8 сек на видео
-
-#### TTS (Coqui TTS)
-- **CPU**: 2-4 ядра
-- **RAM**: 2-4 GB
-- **Время обработки**: ~1-3 сек на предложение
-
-#### Avatar (SadTalker)
-- **CPU**: 4-6 ядер
-- **RAM**: 4-8 GB
-- **GPU**: RTX 3060+ (рекомендуется)
-- **Время обработки**: ~10-30 сек на аватар
-
-### Рекомендации по оптимизации
-
-#### Для слабых машин
-```bash
-# Запуск только основных сервисов
-docker-compose up -d postgres redis minio backend
-
-# Запуск ML сервисов по одному
-docker-compose up -d whisperx
-docker-compose up -d sbert-embed
-# и т.д.
-```
-
-#### Для мощных машин
-```bash
-# Запуск всех сервисов одновременно
-docker-compose up --build -d
-
-# Мониторинг ресурсов
-docker stats
-```
-
-#### Настройка Docker
-```bash
-# Увеличение памяти для Docker Desktop
-# Windows/macOS: Settings -> Resources -> Memory -> 8GB+
-
-# Linux: настройка cgroups
-echo 'GRUB_CMDLINE_LINUX="cgroup_enable=memory swapaccount=1"' >> /etc/default/grub
-sudo update-grub
-```
-
-### Проверка готовности системы
-
-#### Скрипт проверки (Windows PowerShell)
+#### Windows (PowerShell)
 ```powershell
-# Проверка Java
+# Проверка версий
 java -version
-
-# Проверка Node.js
 node --version
+docker --version
+docker-compose --version
 
-# Проверка Docker
+# Проверка свободного места на диске C:
+Get-WmiObject -Class Win32_LogicalDisk -Filter "DeviceID='C:'" | Select-Object @{Name="FreeSpace(GB)";Expression={[math]::Round($_.FreeSpace/1GB,2)}}
+
+# Проверка общего объема RAM
+(Get-WmiObject -Class Win32_ComputerSystem).TotalPhysicalMemory / 1GB
+```
+
+#### Linux / macOS (Bash)
+```bash
+# Проверка версий
+java -version
+node --version
 docker --version
 docker-compose --version
 
 # Проверка свободного места
-Get-WmiObject -Class Win32_LogicalDisk | Select-Object DeviceID, @{Name="Size(GB)";Expression={[math]::Round($_.Size/1GB,2)}}, @{Name="FreeSpace(GB)";Expression={[math]::Round($_.FreeSpace/1GB,2)}}
+df -h /
 
 # Проверка RAM
-Get-WmiObject -Class Win32_ComputerSystem | Select-Object TotalPhysicalMemory
+free -h  # Linux
+sysctl -n hw.memsize | awk '{print $0/1073741824 " GB"}' # macOS
+
+# Проверка количества ядер CPU
+nproc # Linux
+sysctl -n hw.ncpu # macOS
 ```
 
-#### Скрипт проверки (Linux/macOS)
+## ⚙️ Запуск и установка
+
+> **Примечание**: `docker-compose` предназначен для быстрой настройки **локального dev-окружения**. Все сервисы запускаются с профилем `dev`.
+
+### Быстрый старт
 ```bash
-# Проверка Java
-java -version
-
-# Проверка Node.js
-node --version
-
-# Проверка Docker
-docker --version
-docker-compose --version
-
-# Проверка свободного места
-df -h
-
-# Проверка RAM
-free -h
-
-# Проверка CPU
-nproc
-lscpu
-```
-
-## ⚙️ Запуск
-
-### Быстрый старт (все сервисы)
-```bash
-# Клонирование
+# 1. Клонировать репозиторий
 git clone <repository-url>
 cd hr-assist
 
-# Запуск всех сервисов
+# 2. Создать .env файл из примера
+cp env.example .env
+
+# 3. Запустить все сервисы
 docker-compose up --build -d
 
-# Проверка статуса
+# 4. Проверить статус контейнеров
 docker-compose ps
 ```
 
-### Запуск отдельных сервисов
-```bash
-# Только база данных и инфраструктура
-docker-compose up -d postgres redis rabbitmq minio
-
-# ML сервисы
-docker-compose up -d whisperx sbert-embed llm rubert detectgpt video-antifraud tts avatar
-
-# Backend
-docker-compose up -d backend
-
-# Frontend
-docker-compose up -d frontend
-```
-
-## 🌐 Доступ к сервисам
-
-- **Backend API**: http://localhost:8081/api/v1
-- **Swagger UI**: http://localhost:8081/api/v1/swagger-ui/index.html
-- **Frontend**: http://localhost:3000
-- **WhisperX**: http://localhost:9100
-- **SBERT**: http://localhost:8088
-- **LLM**: http://localhost:8090
-- **RuBERT**: http://localhost:8095
-- **DetectGPT**: http://localhost:8092
-- **Video Antifraud**: http://localhost:8091
-- **TTS**: http://localhost:8094
-- **Avatar**: http://localhost:8093
-
-## 🔧 Конфигурация
-
-### Backend (application-dev.properties)
-```properties
-# Внешние ML сервисы
-WHISPERX_URL=http://whisperx:9000
-SBERT_URL=http://sbert-embed:8080
-LLM_URL=http://llm:8090
-RUBERT_URL=http://rubert:8095
-DETECTGPT_URL=http://detectgpt:8092
-VIDEO_ANTIFRAUD_URL=http://video-antifraud:8091
-TTS_URL=http://tts:8094
-AVATAR_URL=http://avatar:8093
-
-# Отключение локальных ML моделей (используем внешние сервисы)
-ml.models.whisper=
-ml.models.embeddings=
-ml.models.classifier=
-ml.models.voice-verification=
-ml.models.face-recognition=
-ml.models.liveness=
-ml.models.ai-detector=
-```
+### Доступ к сервисам
+- **Frontend**: `http://localhost:3000`
+- **Backend API**: `http://localhost:8081/api/v1`
+- **Swagger UI**: `http://localhost:8081/api/v1/swagger-ui/index.html`
+- **Grafana**: `http://localhost:3001` (admin/admin)
+- **Prometheus**: `http://localhost:9090`
+- **MinIO Console**: `http://localhost:9003` (minioadmin/minioadmin)
+- **RabbitMQ**: `http://localhost:15672` (guest/guest)
+- **Kibana**: `http://localhost:5601`
 
 ## 🧪 Тестирование
 
-### Тестовые пользователи (DEV)
+### Тестовые пользователи
 - **ADMIN**: `admin@hr-assistant.com` / `admin123`
 - **HR**: `hr@hr-assistant.com` / `admin123`
-- **INTERVIEWER**: `interviewer@hr-assistant.com` / `admin123`
 
-### API тестирование
+### Пример API запроса (через cURL)
 ```bash
-# Получение JWT токена
-curl -X POST http://localhost:8081/api/v1/auth/login \
+# 1. Получить JWT токен
+TOKEN=$(curl -s -X POST http://localhost:8081/api/v1/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"admin@hr-assistant.com","password":"admin123"}'
+  -d '{"email":"admin@hr-assistant.com","password":"admin123"}' | jq -r .token)
 
-# Тест транскрипции
+# 2. Тест транскрипции
 curl -X POST http://localhost:8081/api/v1/asr/transcribe \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  -F "file=@test.wav"
-
-# Тест обучения моделей
-curl -X POST http://localhost:8081/api/v1/admin/ml/train \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+  -H "Authorization: Bearer $TOKEN" \
+  -F "file=@path/to/your/test.wav"
 ```
 
-## 📊 Мониторинг
+## 🚀 Развертывание в Kubernetes
+> **Примечание**: Kubernetes (через Helm) является рекомендуемым способом развертывания системы в **production-окружении**.
 
-- **Grafana**: http://localhost:3001 (admin/admin)
-- **Prometheus**: http://localhost:9090
-- **MinIO Console**: http://localhost:9003 (minioadmin/minioadmin)
-- **RabbitMQ Management**: http://localhost:15672 (guest/guest)
-
-## 🚀 Продакшн
-
-### Kubernetes (Helm)
+Платформа готова к развертыванию в Kubernetes с помощью предоставленных Helm-чартов.
 ```bash
-# Установка через Helm
+# Установка
 helm install hr-assist ./helm/hr-assist -n hr --create-namespace
 
 # Обновление
 helm upgrade hr-assist ./helm/hr-assist -n hr
 ```
 
-### Переменные окружения
-```bash
-# Копирование примера
-cp env.example .env
-
-# Редактирование конфигурации
-nano .env
-```
-
-## 🔒 Безопасность
-
-- **JWT токены** для аутентификации
-- **RBAC** для авторизации (ADMIN, HR, INTERVIEWER)
-- **TLS** для шифрования трафика
-- **GDPR** поддержка удаления данных
-
-## 📈 Производительность
-
-- **Транскрипция**: ~2-5 сек на 1 минуту аудио
-- **Анализ соответствия**: ~1-2 сек на ответ
-- **Антифрод проверки**: ~3-5 сек на видео
-- **TTS синтез**: ~1-3 сек на предложение
-
-## 🛠️ Устранение неполадок
-
-### Частые проблемы
-```bash
-# Проверка логов
-docker-compose logs -f backend
-docker-compose logs -f whisperx
-
-# Перезапуск сервиса
-docker-compose restart backend
-
-# Очистка и пересборка
-docker-compose down
-docker-compose up --build -d
-```
-
-### Проверка здоровья сервисов
-```bash
-# Проверка всех ML сервисов
-curl http://localhost:9100/health  # WhisperX
-curl http://localhost:8088/health  # SBERT
-curl http://localhost:8090/health  # LLM
-curl http://localhost:8095/health  # RuBERT
-curl http://localhost:8092/health  # DetectGPT
-curl http://localhost:8091/health  # Video Antifraud
-curl http://localhost:8094/health  # TTS
-curl http://localhost:8093/health  # Avatar
-```
-
 ## 📄 Лицензия
-
-MIT License - см. файл [LICENSE](LICENSE) для деталей.
-
----
-
-**HR Assistant** - Современное решение для автоматизации процесса интервью с кандидатами с использованием AI.
-
+Этот проект распространяется под лицензией MIT. См. файл `LICENSE` для получения дополнительной информации.
